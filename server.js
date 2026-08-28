@@ -12,6 +12,7 @@ app.use(express.static(__dirname));
 const PORT = process.env.PORT || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const DATABASE_URL = process.env.DATABASE_URL || '';
+const ADMIN_SECRET = process.env.ADMIN_SECRET || '';
 const STARTING_BALANCE = 0;
 const STAKE_OPTIONS = [5, 10, 20, 30, 40, 50]; // must match frontend STAKE_OPTIONS
 const MAX_NUMBERS = 8; // must match frontend MAX_NUMBERS
@@ -149,6 +150,99 @@ async function markOrder(orderId, status, adminId) {
     await pool.query(sql, [orderId, status, adminId]);
 }
 
+// ---------------------------------------------------------------------------
+// Admin helpers
+// ---------------------------------------------------------------------------
+
+// ሁሉንም {userId, balance} ተጠቃሚዎች ይመልሳል
+async function getAllBalances() {
+    if (!pool) {
+        return Object.keys(memBalances).map(function (userId) {
+            return { userId: userId, balance: memBalances[userId] };
+        });
+    }
+    const result = await pool.query('SELECT user_id, balance FROM balances ORDER BY user_id');
+    return result.rows.map(function (row) {
+        return { userId: row.user_id, balance: Number(row.balance) };
+    });
+}
+
+// የተረጋገጡ (confirmed) deposit/withdraw ትዕዛዞችን ድምር ይመልሳል
+async function getConfirmedTotals() {
+    if (!pool) {
+        let totalDeposits = 0;
+        let totalWithdrawals = 0;
+        Object.keys(memOrders.orders).forEach(function (orderId) {
+            const order = memOrders.orders[orderId];
+            if (order.status !== 'confirmed') return;
+            if (order.type === 'deposit') totalDeposits += Number(order.amount);
+            if (order.type === 'withdraw') totalWithdrawals += Number(order.amount);
+        });
+        return { totalDeposits: totalDeposits, totalWithdrawals: totalWithdrawals };
+    }
+    const depResult = await pool.query("SELECT COALESCE(SUM(amount), 0) AS total FROM orders WHERE type = 'deposit' AND status = 'confirmed'");
+    const wdResult = await pool.query("SELECT COALESCE(SUM(amount), 0) AS total FROM orders WHERE type = 'withdraw' AND status = 'confirmed'");
+    return { totalDeposits: Number(depResult.rows[0].total), totalWithdrawals: Number(wdResult.rows[0].total) };
+}
+
+// አድሚን routes ን የሚጠብቅ middleware — 'x-admin-secret' header ወይም
+// '?secret=' query parameter በ ADMIN_SECRET እኩል መሆን አለበት።
+function requireAdmin(req, res, next) {
+    if (!ADMIN_SECRET) {
+        return res.status(503).json({ error: 'admin access not configured' });
+    }
+    const provided = req.get('x-admin-secret') || req.query.secret || '';
+    if (provided !== ADMIN_SECRET) {
+        return res.status(401).json({ error: 'unauthorized' });
+    }
+    next();
+}
+
+app.get('/api/admin/stats', requireAdmin, async function (req, res) {
+    try {
+        const balances = await getAllBalances();
+        const totals = await getConfirmedTotals();
+        const netProfit = totals.totalDeposits - totals.totalWithdrawals - balances.reduce(function (sum, u) { return sum + u.balance; }, 0);
+        res.json({
+            total_users: balances.length,
+            total_deposits: totals.totalDeposits,
+            total_withdrawals: totals.totalWithdrawals,
+            net_profit: netProfit,
+            online_now: countOnline()
+        });
+    } catch (err) {
+        console.error('admin/stats error:', err);
+        res.status(500).json({ error: 'failed to load stats' });
+    }
+});
+
+app.get('/api/admin/users-report', requireAdmin, async function (req, res) {
+    try {
+        const balances = await getAllBalances();
+        const cutoff = Date.now() - ONLINE_WINDOW_MS;
+        const withOnline = balances.map(function (u) {
+            const seen = lastSeen[u.userId];
+            return {
+                userId: u.userId,
+                name: seen ? seen.name : null,
+                balance: u.balance,
+                online: !!(seen && seen.ts >= cutoff)
+            };
+        });
+        res.json({ users: withOnline });
+    } catch (err) {
+        console.error('admin/users-report error:', err);
+        res.status(500).json({ error: 'failed to load users report' });
+    }
+});
+
+// የቅርብ ጊዜ እንቅስቃሴ (ውርርድ/ውጤት) ዝርዝር — ማን ተጫውቷል፣ ማን አሸነፈ፣ ስንት ብር
+app.get('/api/admin/activity', requireAdmin, async function (req, res) {
+    const limit = Math.min(Number(req.query.limit) || 50, ACTIVITY_LOG_MAX);
+    res.json({ activity: activityLog.slice(0, limit) });
+});
+// ---------------------------------------------------------------------------
+
 function sortEntries(entries) {
     entries.sort(function (a, b) {
         if (a[0] < b[0]) return -1;
@@ -198,6 +292,35 @@ const roundTickets = {};
 const resolvedRounds = {};
 function currentRoundId() { return Math.floor(Date.now() / 1000 / ROUND_LENGTH); }
 
+// ---------------------------------------------------------------------------
+// Live monitoring: who's online right now, and a rolling feed of recent bets
+// / wins so the admin can watch activity without querying the DB.
+// ---------------------------------------------------------------------------
+const ONLINE_WINDOW_MS = 30 * 1000; // ተጠቃሚው ባለፉት 30 ሰከንድ ውስጥ ጥያቄ ካደረገ "online" ተብሎ ይቆጠራል
+const lastSeen = {}; // userId -> timestamp (ms)
+const ACTIVITY_LOG_MAX = 200;
+const activityLog = []; // newest first
+
+function touch(userId, name) {
+    lastSeen[userId] = { ts: Date.now(), name: name || null };
+}
+
+function countOnline() {
+    const cutoff = Date.now() - ONLINE_WINDOW_MS;
+    let count = 0;
+    Object.keys(lastSeen).forEach(function (userId) {
+        if (lastSeen[userId].ts >= cutoff) count++;
+    });
+    return count;
+}
+
+function logActivity(entry) {
+    entry.time = new Date().toISOString();
+    activityLog.unshift(entry);
+    if (activityLog.length > ACTIVITY_LOG_MAX) activityLog.length = ACTIVITY_LOG_MAX;
+}
+// ---------------------------------------------------------------------------
+
 app.get('/', function (req, res) {
     res.send('Spin and Win API server is running');
 });
@@ -206,6 +329,7 @@ app.get('/api/balance', async function (req, res) {
     const initData = req.query.initData || '';
     const user = validateInitData(initData);
     if (!user) return res.status(401).json({ error: 'invalid initData' });
+    touch(user.id, user.first_name);
     res.json({ balance: await getBalance(user.id) });
 });
 
@@ -256,6 +380,9 @@ app.post('/api/place-ticket', async function (req, res) {
     if (!roundTickets[round]) roundTickets[round] = {};
     const ticketId = round + '-' + user.id;
     roundTickets[round][user.id] = { betType: betType, numbers: numbers || [], stake: stake, perNumberStake: perNumberStake, ticketId: ticketId };
+    touch(user.id, user.first_name);
+    logActivity({ type: 'bet', userId: user.id, name: user.first_name || null, betType: betType, numbers: numbers || [], stake: stake, round: round });
+    console.log('[BET]', 'user=' + user.id, 'round=' + round, 'betType=' + betType, 'numbers=' + JSON.stringify(numbers), 'stake=' + stake);
     res.json({ ticket_id: ticketId, balance: await getBalance(user.id) });
 });
 
@@ -269,6 +396,7 @@ app.get('/api/round-result', async function (req, res) {
         const winningNumber = WHEEL_ORDER[Math.floor(Math.random() * WHEEL_ORDER.length)];
         resolvedRounds[round] = { winning_number: winningNumber, winning_color: colorFor(winningNumber) };
         cleanupOldLiability(round);
+        console.log('[SPIN]', 'round=' + round, 'winningNumber=' + winningNumber);
     }
     const winning_number = resolvedRounds[round].winning_number;
     const winning_color = resolvedRounds[round].winning_color;
@@ -305,6 +433,9 @@ app.get('/api/round-result', async function (req, res) {
             amount = won ? ticket.stake * DOZEN_MULTIPLIER : 0;
         }
         if (won && amount > 0) { await changeBalance(user.id, amount); }
+        touch(user.id, user.first_name);
+        logActivity({ type: 'result', userId: user.id, name: user.first_name || null, betType: ticket.betType, stake: ticket.stake, won: won, amount: amount, winningNumber: winning_number, round: round });
+        console.log('[RESULT]', 'user=' + user.id, 'round=' + round, 'yourNumbers=' + JSON.stringify(ticket.numbers), 'winningNumber=' + winning_number, 'won=' + won);
     }
     res.json({ winning_number: winning_number, winning_color: winning_color, won: won, amount: amount, balance: await getBalance(user.id) });
 });
@@ -317,7 +448,7 @@ app.post('/api/deposit/request', async function (req, res) {
     res.json({ orderId: orderId });
 });
 
-app.post('/api/deposit/confirm', async function (req, res) {
+app.post('/api/deposit/confirm', requireAdmin, async function (req, res) {
     const orderId = req.body.orderId;
     const adminId = req.body.adminId;
     const order = await getOrder(orderId);
@@ -328,7 +459,7 @@ app.post('/api/deposit/confirm', async function (req, res) {
     res.json({ userId: order.userId, balance: newBalance });
 });
 
-app.post('/api/deposit/reject', async function (req, res) {
+app.post('/api/deposit/reject', requireAdmin, async function (req, res) {
     const orderId = req.body.orderId;
     const adminId = req.body.adminId;
     const order = await getOrder(orderId);
@@ -351,7 +482,7 @@ app.post('/api/withdraw/request', async function (req, res) {
     res.json({ orderId: orderId, balance: await getBalance(String(userId)) });
 });
 
-app.post('/api/withdraw/confirm', async function (req, res) {
+app.post('/api/withdraw/confirm', requireAdmin, async function (req, res) {
     const orderId = req.body.orderId;
     const adminId = req.body.adminId;
     const order = await getOrder(orderId);
@@ -361,7 +492,7 @@ app.post('/api/withdraw/confirm', async function (req, res) {
     res.json({ userId: order.userId, balance: await getBalance(String(order.userId)) });
 });
 
-app.post('/api/withdraw/reject', async function (req, res) {
+app.post('/api/withdraw/reject', requireAdmin, async function (req, res) {
     const orderId = req.body.orderId;
     const adminId = req.body.adminId;
     const order = await getOrder(orderId);
