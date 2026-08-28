@@ -54,7 +54,11 @@ function payoutForOutcome(betType, numbers, stake, outcome) {
     return 0;
 }
 
-// { [round]: [37 numbers] } — running liability per possible outcome
+// { [round]: [37 numbers] } — running liability per possible outcome.
+// NOTE: intentionally kept in-memory (not DB-backed). It's a soft safety
+// valve, not money itself — if the server restarts mid-round the cap just
+// resets to 0 for that round, which is a harmless (slightly more permissive)
+// outcome, unlike losing ticket/balance data.
 const roundLiability = {};
 
 function getLiabilityArray(round) {
@@ -95,10 +99,18 @@ const pool = DATABASE_URL ? new Pool({ connectionString: DATABASE_URL, ssl: { re
 const memBalances = {};
 const memOrders = { nextId: 1, orders: {} };
 
+// In-memory fallback stores, used only when there's no DATABASE_URL
+// (e.g. local dev). When pool exists, round_tickets / resolved_rounds
+// tables are the source of truth instead.
+const memRoundTickets = {};
+const memResolvedRounds = {};
+
 async function initDb() {
     if (!pool) return;
     await pool.query('CREATE TABLE IF NOT EXISTS balances (user_id TEXT PRIMARY KEY, balance NUMERIC NOT NULL DEFAULT 0)');
     await pool.query('CREATE TABLE IF NOT EXISTS orders (order_id SERIAL PRIMARY KEY, type TEXT NOT NULL, user_id TEXT NOT NULL, amount NUMERIC NOT NULL, status TEXT NOT NULL DEFAULT \'pending\', phone TEXT, confirmed_by TEXT, rejected_by TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now())');
+    await pool.query('CREATE TABLE IF NOT EXISTS round_tickets (round BIGINT NOT NULL, user_id TEXT NOT NULL, ticket_id TEXT NOT NULL, bet_type TEXT NOT NULL, numbers JSONB NOT NULL DEFAULT \'[]\', stake NUMERIC NOT NULL, per_number_stake NUMERIC NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), PRIMARY KEY (round, user_id))');
+    await pool.query('CREATE TABLE IF NOT EXISTS resolved_rounds (round BIGINT PRIMARY KEY, winning_number INT NOT NULL, winning_color TEXT NOT NULL, resolved_at TIMESTAMPTZ NOT NULL DEFAULT now())');
     console.log('Database tables ready');
 }
 
@@ -149,6 +161,70 @@ async function markOrder(orderId, status, adminId) {
     const sql = 'UPDATE orders SET status = $2, ' + col + ' = $3 WHERE order_id = $1';
     await pool.query(sql, [orderId, status, adminId]);
 }
+
+// ---------------------------------------------------------------------------
+// Round tickets / resolved rounds — DB-backed (with in-memory fallback when
+// there's no DATABASE_URL) so bets and results survive a server restart.
+// ---------------------------------------------------------------------------
+
+async function saveTicket(round, userId, ticket) {
+    if (!pool) {
+        if (!memRoundTickets[round]) memRoundTickets[round] = {};
+        memRoundTickets[round][userId] = ticket;
+        return;
+    }
+    await pool.query(
+        'INSERT INTO round_tickets (round, user_id, ticket_id, bet_type, numbers, stake, per_number_stake) VALUES ($1, $2, $3, $4, $5, $6, $7) ' +
+        'ON CONFLICT (round, user_id) DO NOTHING',
+        [round, userId, ticket.ticketId, ticket.betType, JSON.stringify(ticket.numbers), ticket.stake, ticket.perNumberStake]
+    );
+}
+
+async function getTicket(round, userId) {
+    if (!pool) {
+        return memRoundTickets[round] && memRoundTickets[round][userId];
+    }
+    const result = await pool.query('SELECT * FROM round_tickets WHERE round = $1 AND user_id = $2', [round, userId]);
+    if (result.rows.length === 0) return null;
+    const row = result.rows[0];
+    return {
+        ticketId: row.ticket_id,
+        betType: row.bet_type,
+        numbers: row.numbers || [],
+        stake: Number(row.stake),
+        perNumberStake: Number(row.per_number_stake)
+    };
+}
+
+// Resolves a round's winning number, atomically-ish: if two requests race to
+// resolve the same round, INSERT ... ON CONFLICT makes sure only one number
+// ever "wins" for that round — everyone reads back the same stored result.
+async function resolveRound(round) {
+    if (!pool) {
+        if (!memResolvedRounds[round]) {
+            const winningNumber = WHEEL_ORDER[Math.floor(Math.random() * WHEEL_ORDER.length)];
+            memResolvedRounds[round] = { winning_number: winningNumber, winning_color: colorFor(winningNumber) };
+            cleanupOldLiability(round);
+            console.log('[SPIN]', 'round=' + round, 'winningNumber=' + winningNumber);
+        }
+        return memResolvedRounds[round];
+    }
+    const existing = await pool.query('SELECT winning_number, winning_color FROM resolved_rounds WHERE round = $1', [round]);
+    if (existing.rows.length > 0) {
+        return { winning_number: existing.rows[0].winning_number, winning_color: existing.rows[0].winning_color };
+    }
+    const winningNumber = WHEEL_ORDER[Math.floor(Math.random() * WHEEL_ORDER.length)];
+    const winningColor = colorFor(winningNumber);
+    const inserted = await pool.query(
+        'INSERT INTO resolved_rounds (round, winning_number, winning_color) VALUES ($1, $2, $3) ' +
+        'ON CONFLICT (round) DO UPDATE SET round = resolved_rounds.round RETURNING winning_number, winning_color',
+        [round, winningNumber, winningColor]
+    );
+    cleanupOldLiability(round);
+    console.log('[SPIN]', 'round=' + round, 'winningNumber=' + inserted.rows[0].winning_number);
+    return { winning_number: inserted.rows[0].winning_number, winning_color: inserted.rows[0].winning_color };
+}
+// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // Admin helpers
@@ -288,8 +364,6 @@ function parseUnsafe(initData) {
     }
 }
 
-const roundTickets = {};
-const resolvedRounds = {};
 function currentRoundId() { return Math.floor(Date.now() / 1000 / ROUND_LENGTH); }
 
 // ---------------------------------------------------------------------------
@@ -350,6 +424,10 @@ app.post('/api/place-ticket', async function (req, res) {
     if (VALID_TYPES.indexOf(betType) === -1) return res.status(400).json({ error: 'invalid bet type' });
     if (STAKE_OPTIONS.indexOf(requestedStake) === -1) return res.status(400).json({ error: 'invalid stake' });
 
+    // Only one ticket per user per round.
+    const existingTicket = await getTicket(round, user.id);
+    if (existingTicket) return res.status(409).json({ error: 'already placed a ticket this round' });
+
     // perNumberStake is what each single number costs / what a single number pays out against.
     // For outside bets, the whole ticket is one unit at requestedStake.
     const perNumberStake = requestedStake;
@@ -377,9 +455,9 @@ app.post('/api/place-ticket', async function (req, res) {
     addLiability(round, betType, numbers || [], payoutStake);
 
     await changeBalance(user.id, -stake);
-    if (!roundTickets[round]) roundTickets[round] = {};
     const ticketId = round + '-' + user.id;
-    roundTickets[round][user.id] = { betType: betType, numbers: numbers || [], stake: stake, perNumberStake: perNumberStake, ticketId: ticketId };
+    const ticket = { betType: betType, numbers: numbers || [], stake: stake, perNumberStake: perNumberStake, ticketId: ticketId };
+    await saveTicket(round, user.id, ticket);
     touch(user.id, user.first_name);
     logActivity({ type: 'bet', userId: user.id, name: user.first_name || null, betType: betType, numbers: numbers || [], stake: stake, round: round });
     console.log('[BET]', 'user=' + user.id, 'round=' + round, 'betType=' + betType, 'numbers=' + JSON.stringify(numbers), 'stake=' + stake);
@@ -392,17 +470,13 @@ app.get('/api/round-result', async function (req, res) {
     const ticketId = req.query.ticket_id;
     const user = validateInitData(initData);
     if (!user) return res.status(401).json({ error: 'invalid initData' });
-    if (!resolvedRounds[round]) {
-        const winningNumber = WHEEL_ORDER[Math.floor(Math.random() * WHEEL_ORDER.length)];
-        resolvedRounds[round] = { winning_number: winningNumber, winning_color: colorFor(winningNumber) };
-        cleanupOldLiability(round);
-        console.log('[SPIN]', 'round=' + round, 'winningNumber=' + winningNumber);
-    }
-    const winning_number = resolvedRounds[round].winning_number;
-    const winning_color = resolvedRounds[round].winning_color;
+
+    const resolved = await resolveRound(round);
+    const winning_number = resolved.winning_number;
+    const winning_color = resolved.winning_color;
     let won = false;
     let amount = 0;
-    const ticket = roundTickets[round] && roundTickets[round][user.id];
+    const ticket = await getTicket(round, user.id);
     if (ticket && ticket.ticketId === ticketId) {
         if (ticket.betType === 'number') {
             // pays perNumberStake * 36 (the amount actually risked on THAT single number), not the ticket total
