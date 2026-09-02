@@ -789,10 +789,12 @@ async function resolveRound(roundId){
     WHEEL_ORDER.indexOf(winningNumber);
 
   const targetAngle =
-    winningIndex * segAngle + (segAngle / 2);
+    winningIndex * segAngle + segAngle/2;
 
-  const offsetAngle = 90;
-  const finalRotation = (360 * 8) - targetAngle + offsetAngle;
+  const fullSpins = 8 * 360;
+
+  const finalRotation =
+    fullSpins - targetAngle;
 
   currentRotation +=
     finalRotation -
@@ -914,6 +916,12 @@ function tickRoundClock(){
     lastPhase = phase;
   }
 
+  /*
+    አዲሱ ለውጥ፦
+    spin ከጨረሰ በኋላ bet ሲጀምር
+    የተጠናቀቀውን የቀድሞ ዙር
+    cid - 1 በመጠቀም ውጤቱን ያመጣል።
+  */
   if (phase === 'bet' && lastPhase === 'spin'){
     resolveRound(cid - 1);
   }
