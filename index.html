@@ -88,7 +88,6 @@
   .result-line.win{color:var(--gold);}
   .result-line.lose{color:var(--text-dim);}
 
-  /* ---- Betting table (felt) ---- */
   .stake-box{background:linear-gradient(160deg,rgba(245,197,66,.10),rgba(245,197,66,.02));
     border:1px solid var(--gold-dim); border-radius:14px; padding:8px 4px; margin-bottom:10px;}
   .stake-box .title{display:flex; align-items:center; gap:6px; color:var(--gold); font-weight:700; margin-bottom:8px; font-size:13px; padding:0 4px;}
@@ -150,7 +149,6 @@
     color:var(--text); padding:10px 18px; border-radius:12px; font-size:13px; font-weight:700; z-index:50; display:none;
     box-shadow:0 6px 16px rgba(0,0,0,.4); max-width:88%; text-align:center;}
 
-  /* ---- Win flash overlay ---- */
   .win-flash{position:fixed; inset:0; display:none; align-items:center; justify-content:center;
     background:rgba(0,0,0,.55); z-index:60;}
   .win-flash.show{display:flex; animation:winFadeOut 2.4s forwards;}
@@ -199,22 +197,27 @@
       <div class="tb-label" id="rtLabel">ይምረጡ</div>
     </div>
   </div>
+
   <div class="result-line" id="resultLine"></div>
 
   <div class="stake-box">
     <div class="title">▷ በሠንጠረዡ ላይ ቁጥር ወይም ምርጫ በጣትዎ ይንኩ</div>
+
     <div class="stake-picker">
       <div class="sp-label">ውርርድ መጠን፦</div>
       <div class="stake-chips" id="stakeChips"></div>
     </div>
+
     <div class="table-felt">
       <div class="zero-row" data-bet="number" data-value="0">0</div>
       <div class="num-grid" id="numGrid"></div>
+
       <div class="dozens-row">
         <div class="outside-cell" data-bet="dozen1">1ኛ ደርዘን<br><small>1–12 · 3x</small></div>
         <div class="outside-cell" data-bet="dozen2">2ኛ ደርዘን<br><small>13–24 · 3x</small></div>
         <div class="outside-cell" data-bet="dozen3">3ኛ ደርዘን<br><small>25–36 · 3x</small></div>
       </div>
+
       <div class="outside-row">
         <div class="outside-cell" data-bet="low">1–18</div>
         <div class="outside-cell" data-bet="even">ጥምዝ</div>
@@ -224,6 +227,7 @@
         <div class="outside-cell" data-bet="high">19–36</div>
       </div>
     </div>
+
     <div class="selected-line">የተመረጠው ውርርድ፦ <b id="selectedLabel">ቀይ Red</b></div>
     <div class="marked-count" id="markedCount"></div>
     <div class="spin-cost">እያንዳንዱ ቁጥር <b id="spinCostLabel">10</b> ብር ያስከፍላል</div>
@@ -235,18 +239,26 @@
 <script>
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
+
 const initData = (tg && tg.initData) ? tg.initData : '';
 
 function toast(t){
-  const m=document.getElementById('msg'); m.textContent=t; m.style.display='block';
-  clearTimeout(window._mt); window._mt=setTimeout(()=>m.style.display='none',2600);
+  const m=document.getElementById('msg');
+  m.textContent=t;
+  m.style.display='block';
+  clearTimeout(window._mt);
+  window._mt=setTimeout(()=>m.style.display='none',2600);
 }
 
 function showWinFlash(amount){
   const el = document.getElementById('winFlash');
-  document.getElementById('winFlashInner').textContent = '🎉 እንኳን ደስ አለዎት! ' + amount + ' ብር አሸንፈዋል 🎉';
-  el.classList.remove('show'); void el.offsetWidth;
+  document.getElementById('winFlashInner').textContent =
+    '🎉 እንኳን ደስ አለዎት! ' + amount + ' ብር አሸንፈዋል 🎉';
+
+  el.classList.remove('show');
+  void el.offsetWidth;
   el.classList.add('show');
+
   setTimeout(()=>el.classList.remove('show'), 2400);
 }
 
@@ -256,68 +268,104 @@ let balance = 0;
 let spinning = false;
 let ticketPlaced = false;
 let ticketId = null;
+
 const STAKE_OPTIONS = [5,10,20,30,40,50];
-const STAKE_MIN = 5, STAKE_MAX = 50;
+const STAKE_MIN = 5;
+const STAKE_MAX = 50;
+
 let currentStake = 10;
-const MAX_NUMBERS = 8; // ከ ሰርቨር ኮድ ጋር እንዲመሳሰል ተደርጓል
+
+const MAX_NUMBERS = 8;
+
 const BET_LENGTH = 40;
 const SPIN_LENGTH = 10;
 const CYCLE_LENGTH = BET_LENGTH + SPIN_LENGTH;
 const HISTORY_MAX = 10;
+
 let resultHistory = [];
 
 async function refreshBalance(){
   try{
     const resp = await fetch(`/api/balance?initData=${encodeURIComponent(initData)}`);
     const data = await resp.json();
+
     balance = data.balance ?? 0;
     document.getElementById('walletBalance').textContent = balance;
   }catch(e){
     document.getElementById('walletBalance').textContent = '–';
   }
 }
+
 refreshBalance();
 
 const stakeChipsEl = document.getElementById('stakeChips');
+
 function renderStakeChips(){
   stakeChipsEl.innerHTML = '';
+
   STAKE_OPTIONS.forEach(v=>{
     const chip = document.createElement('div');
+
     chip.className = 'stake-chip' + (v === currentStake ? ' active' : '');
     chip.textContent = v;
+
     chip.addEventListener('click', ()=>{
       if (ticketPlaced || spinning) return;
+
       currentStake = v;
+
       document.getElementById('walletStake').textContent = currentStake;
       document.getElementById('spinCostLabel').textContent = currentStake;
+
       renderStakeChips();
       refreshSelectedLine();
-      if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+
+      if (tg && tg.HapticFeedback)
+        tg.HapticFeedback.selectionChanged();
     });
+
     stakeChipsEl.appendChild(chip);
   });
 }
+
 renderStakeChips();
+
 document.getElementById('walletStake').textContent = currentStake;
 document.getElementById('spinCostLabel').textContent = currentStake;
 
-const RED_NUMBERS = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
-function colorFor(n){ if(n===0) return 'green'; return RED_NUMBERS.has(n) ? 'red' : 'black'; }
+const RED_NUMBERS = new Set([
+  1,3,5,7,9,12,14,16,18,
+  19,21,23,25,27,30,32,34,36
+]);
+
+function colorFor(n){
+  if(n===0) return 'green';
+  return RED_NUMBERS.has(n) ? 'red' : 'black';
+}
 
 const numGrid = document.getElementById('numGrid');
+
 for (let n=1; n<=36; n++){
   const cell = document.createElement('div');
+
   cell.className = 'num-cell ' + colorFor(n);
   cell.textContent = n;
   cell.dataset.bet = 'number';
   cell.dataset.value = n;
+
   numGrid.appendChild(cell);
 }
 
 const BET_LABELS = {
-  red:'ቀይ Red', black:'ጥቁር Black', odd:'ጎዶሎ Odd', even:'ጥምዝ Even',
-  low:'1–18', high:'19–36',
-  dozen1:'1ኛ ደርዘን (1–12)', dozen2:'2ኛ ደርዘን (13–24)', dozen3:'3ኛ ደርዘን (25–36)',
+  red:'ቀይ Red',
+  black:'ጥቁር Black',
+  odd:'ጎዶሎ Odd',
+  even:'ጥምዝ Even',
+  low:'1–18',
+  high:'19–36',
+  dozen1:'1ኛ ደርዘን (1–12)',
+  dozen2:'2ኛ ደርዘን (13–24)',
+  dozen3:'3ኛ ደርዘን (25–36)'
 };
 
 const numberEls = document.querySelectorAll('[data-bet="number"]');
@@ -326,156 +374,329 @@ const outsideEls = document.querySelectorAll('.outside-cell[data-bet]');
 function refreshSelectedLine(){
   const label = document.getElementById('selectedLabel');
   const count = document.getElementById('markedCount');
+
   if (betType === 'number' && markedNumbers.length){
     const sorted = [...markedNumbers].sort((a,b)=>a-b);
+
     label.textContent = 'ቁጥር ' + sorted.join(', ') + ' (36x)';
-    count.textContent = 'የተመረጡ ቁጥሮች: ' + markedNumbers.length + '/' + MAX_NUMBERS;
-  } else if (betType){
+    count.textContent =
+      'የተመረጡ ቁጥሮች: ' +
+      markedNumbers.length +
+      '/' +
+      MAX_NUMBERS;
+  }
+  else if (betType){
     label.textContent = BET_LABELS[betType] || betType;
     count.textContent = '';
-  } else {
+  }
+  else{
     label.textContent = '— ገና አልተመረጠም —';
     count.textContent = '';
   }
-  document.getElementById('ticketBtn').disabled = ticketPlaced || spinning ||
-    !(betType === 'number' ? markedNumbers.length > 0 : !!betType);
+
+  document.getElementById('ticketBtn').disabled =
+    ticketPlaced ||
+    spinning ||
+    !(betType === 'number'
+      ? markedNumbers.length > 0
+      : !!betType);
 }
 
 numberEls.forEach(el=>{
   el.addEventListener('click', ()=>{
     if (ticketPlaced || spinning) return;
+
     const n = parseInt(el.dataset.value, 10);
     const idx = markedNumbers.indexOf(n);
+
     if (idx >= 0){
       markedNumbers.splice(idx,1);
       el.classList.remove('marked');
-    } else {
+    }
+    else{
       if (markedNumbers.length >= MAX_NUMBERS){
-        toast('⚠️ በአንድ ትኬት ቢበዛ ' + MAX_NUMBERS + ' ቁጥር ብቻ መያዝ ይችላሉ');
+        toast(
+          '⚠️ በአንድ ትኬት ቢበዛ ' +
+          MAX_NUMBERS +
+          ' ቁጥር ብቻ መያዝ ይችላሉ'
+        );
         return;
       }
+
       markedNumbers.push(n);
       el.classList.add('marked');
     }
+
     if (markedNumbers.length > 0){
       betType = 'number';
       outsideEls.forEach(e=>e.classList.remove('selected'));
-    } else {
+    }
+    else{
       betType = null;
     }
+
     refreshSelectedLine();
-    if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+
+    if (tg && tg.HapticFeedback)
+      tg.HapticFeedback.selectionChanged();
   });
 });
 
 outsideEls.forEach(el=>{
   el.addEventListener('click', ()=>{
     if (ticketPlaced || spinning) return;
+
     outsideEls.forEach(e=>e.classList.remove('selected'));
+
     el.classList.add('selected');
+
     betType = el.dataset.bet;
+
     markedNumbers = [];
+
     numberEls.forEach(e=>e.classList.remove('marked'));
+
     refreshSelectedLine();
-    if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+
+    if (tg && tg.HapticFeedback)
+      tg.HapticFeedback.selectionChanged();
   });
 });
+
 refreshSelectedLine();
 
-const WHEEL_ORDER = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+const WHEEL_ORDER = [
+  0,32,15,19,4,21,2,25,17,34,6,27,13,
+  36,11,30,8,23,10,5,24,16,33,1,20,14,
+  31,9,22,18,29,7,28,12,35,3,26
+];
+
 const svg = document.getElementById('wheel-svg');
-const CX=150, CY=150, R=148;
+
+const CX=150;
+const CY=150;
+const R=148;
+
 const segAngle = 360 / WHEEL_ORDER.length;
-function polar(cx,cy,r,angleDeg){ const rad=(angleDeg-90)*Math.PI/180; return {x:cx+r*Math.cos(rad), y:cy+r*Math.sin(rad)}; }
+
+function polar(cx,cy,r,angleDeg){
+  const rad=(angleDeg-90)*Math.PI/180;
+
+  return {
+    x:cx+r*Math.cos(rad),
+    y:cy+r*Math.sin(rad)
+  };
+}
+
 const svgNS = "http://www.w3.org/2000/svg";
-function hexFor(n){ const c=colorFor(n); return c==='green' ? '#18b673' : c==='red' ? '#d81e05' : '#0d0d0d'; }
+
+function hexFor(n){
+  const c=colorFor(n);
+
+  return c==='green'
+    ? '#18b673'
+    : c==='red'
+      ? '#d81e05'
+      : '#0d0d0d';
+}
+
 const INNER_R = R*0.42;
+
 WHEEL_ORDER.forEach((num,i)=>{
-  const startAngle=i*segAngle, endAngle=startAngle+segAngle;
+  const startAngle=i*segAngle;
+  const endAngle=startAngle+segAngle;
   const mid=startAngle+segAngle/2;
 
-  const po1=polar(CX,CY,R,startAngle), po2=polar(CX,CY,R,endAngle);
-  const pi1=polar(CX,CY,INNER_R,endAngle), pi2=polar(CX,CY,INNER_R,startAngle);
+  const po1=polar(CX,CY,R,startAngle);
+  const po2=polar(CX,CY,R,endAngle);
+
+  const pi1=polar(CX,CY,INNER_R,endAngle);
+  const pi2=polar(CX,CY,INNER_R,startAngle);
+
   const largeArc = segAngle>180 ? 1:0;
+
   const path=document.createElementNS(svgNS,"path");
-  path.setAttribute("d",
-    `M${po1.x},${po1.y} A${R},${R} 0 ${largeArc} 1 ${po2.x},${po2.y} L${pi1.x},${pi1.y} A${INNER_R},${INNER_R} 0 ${largeArc} 0 ${pi2.x},${pi2.y} Z`);
+
+  path.setAttribute(
+    "d",
+    `M${po1.x},${po1.y}
+     A${R},${R} 0 ${largeArc} 1 ${po2.x},${po2.y}
+     L${pi1.x},${pi1.y}
+     A${INNER_R},${INNER_R} 0 ${largeArc} 0 ${pi2.x},${pi2.y}
+     Z`
+  );
+
   path.setAttribute("fill", hexFor(num));
   path.setAttribute("stroke", "#0a0714");
   path.setAttribute("stroke-width", "1.5");
+
   svg.appendChild(path);
 
   const dotCount = 3 + (i % 3);
+
   for (let d=0; d<dotCount; d++){
-    const t = 0.15 + (d/(dotCount-1||1))*0.28 + (Math.random()-0.5)*0.04;
-    const spread = (Math.random()-0.5)*segAngle*0.5;
-    const dotR = INNER_R + t*(R-INNER_R);
-    const dpos = polar(CX,CY,dotR,mid+spread);
-    const dot=document.createElementNS(svgNS,"circle");
-    dot.setAttribute("cx", dpos.x); dot.setAttribute("cy", dpos.y);
+    const t =
+      0.15 +
+      (d/(dotCount-1||1))*0.28 +
+      (Math.random()-0.5)*0.04;
+
+    const spread =
+      (Math.random()-0.5)*segAngle*0.5;
+
+    const dotR =
+      INNER_R +
+      t*(R-INNER_R);
+
+    const dpos =
+      polar(CX,CY,dotR,mid+spread);
+
+    const dot =
+      document.createElementNS(svgNS,"circle");
+
+    dot.setAttribute("cx", dpos.x);
+    dot.setAttribute("cy", dpos.y);
     dot.setAttribute("r", 1.6);
     dot.setAttribute("fill", "#f5c542");
     dot.setAttribute("opacity", "0.7");
+
     svg.appendChild(dot);
   }
 
-  const labelPos=polar(CX,CY,R*0.90,mid);
-  const text=document.createElementNS(svgNS,"text");
-  text.setAttribute("x", labelPos.x); text.setAttribute("y", labelPos.y);
-  text.setAttribute("fill","#ffffff"); text.setAttribute("font-size","14"); text.setAttribute("font-weight","900");
-  text.setAttribute("text-anchor","middle"); text.setAttribute("dominant-baseline","middle");
-  text.setAttribute("transform", `rotate(${mid}, ${labelPos.x}, ${labelPos.y})`);
+  const labelPos =
+    polar(CX,CY,R*0.90,mid);
+
+  const text =
+    document.createElementNS(svgNS,"text");
+
+  text.setAttribute("x", labelPos.x);
+  text.setAttribute("y", labelPos.y);
+  text.setAttribute("fill","#ffffff");
+  text.setAttribute("font-size","14");
+  text.setAttribute("font-weight","900");
+  text.setAttribute("text-anchor","middle");
+  text.setAttribute("dominant-baseline","middle");
+
+  text.setAttribute(
+    "transform",
+    `rotate(${mid}, ${labelPos.x}, ${labelPos.y})`
+  );
+
   text.textContent = num;
+
   svg.appendChild(text);
 });
-const hubRing=document.createElementNS(svgNS,"circle");
-hubRing.setAttribute("cx",CX); hubRing.setAttribute("cy",CY); hubRing.setAttribute("r",INNER_R);
+
+const hubRing =
+  document.createElementNS(svgNS,"circle");
+
+hubRing.setAttribute("cx",CX);
+hubRing.setAttribute("cy",CY);
+hubRing.setAttribute("r",INNER_R);
 hubRing.setAttribute("fill","#0a0714");
+
 svg.insertBefore(hubRing, svg.firstChild);
-svg.appendChild((()=>{ const c=document.createElementNS(svgNS,"circle");
-  c.setAttribute("cx",CX); c.setAttribute("cy",CY); c.setAttribute("r",INNER_R);
-  c.setAttribute("fill","none"); c.setAttribute("stroke","#f5c542"); c.setAttribute("stroke-width","2"); c.setAttribute("opacity","0.5");
-  return c; })());
+
+svg.appendChild(
+  (()=>{
+    const c =
+      document.createElementNS(svgNS,"circle");
+
+    c.setAttribute("cx",CX);
+    c.setAttribute("cy",CY);
+    c.setAttribute("r",INNER_R);
+    c.setAttribute("fill","none");
+    c.setAttribute("stroke","#f5c542");
+    c.setAttribute("stroke-width","2");
+    c.setAttribute("opacity","0.5");
+
+    return c;
+  })()
+);
 
 let currentRotation = 0;
 let lastCycleId = null;
 let lastPhase = null;
 
-function roundIdNow(){ return Math.floor(Date.now()/1000 / CYCLE_LENGTH); }
-function cyclePosNow(){ return Math.floor(Date.now()/1000) % CYCLE_LENGTH; }
-function isSpinPhase(pos){ return pos >= BET_LENGTH; }
-function secondsLeftInBet(pos){ return BET_LENGTH - pos; }
-function secondsLeftInSpin(pos){ return CYCLE_LENGTH - pos; }
+function roundIdNow(){
+  return Math.floor(
+    Date.now()/1000 / CYCLE_LENGTH
+  );
+}
+
+function cyclePosNow(){
+  return Math.floor(Date.now()/1000) % CYCLE_LENGTH;
+}
+
+function isSpinPhase(pos){
+  return pos >= BET_LENGTH;
+}
+
+function secondsLeftInBet(pos){
+  return BET_LENGTH - pos;
+}
+
+function secondsLeftInSpin(pos){
+  return CYCLE_LENGTH - pos;
+}
 
 function lockBoard(){
   numberEls.forEach(el=>el.classList.add('disabled'));
   outsideEls.forEach(el=>el.classList.add('disabled'));
 }
+
 function unlockBoardForNewRound(){
   markedNumbers = [];
   betType = null;
   ticketPlaced = false;
   ticketId = null;
-  numberEls.forEach(el=>{ el.classList.remove('marked'); el.classList.remove('disabled'); });
-  outsideEls.forEach(el=>{ el.classList.remove('selected'); el.classList.remove('disabled'); });
+
+  numberEls.forEach(el=>{
+    el.classList.remove('marked');
+    el.classList.remove('disabled');
+  });
+
+  outsideEls.forEach(el=>{
+    el.classList.remove('selected');
+    el.classList.remove('disabled');
+  });
+
   document.getElementById('resultLine').textContent = '';
-  document.getElementById('resultLine').className = 'result-line';
-  document.getElementById('ticketBtn').textContent = '🎫 ትኬት ቁረጥ';
-  document.getElementById('ticketBtn').classList.remove('ticketed');
+
+  document.getElementById('resultLine').className =
+    'result-line';
+
+  document.getElementById('ticketBtn').textContent =
+    '🎫 ትኬት ቁረጥ';
+
+  document.getElementById('ticketBtn')
+    .classList.remove('ticketed');
+
   refreshSelectedLine();
 }
 
 async function cutTicket(){
   if (ticketPlaced || spinning) return;
-  if (betType === 'number' && markedNumbers.length === 0){
-    toast('⚠️ እባክዎ ቢያንስ አንድ ቁጥር ይምረጡ!');
+
+  if (
+    betType === 'number' &&
+    markedNumbers.length === 0
+  ){
+    toast(
+      '⚠️ እባክዎ ቢያንስ አንድ ቁጥር ይምረጡ!'
+    );
     return;
   }
+
   if (!betType){
     toast('⚠️ እባክዎ ምርጫ ያድርጉ!');
     return;
   }
-  const stake = betType === 'number' ? markedNumbers.length * currentStake : currentStake;
+
+  const stake =
+    betType === 'number'
+      ? markedNumbers.length * currentStake
+      : currentStake;
+
   if (balance < stake){
     toast('❌ በቂ ሂሳብ የለዎትም');
     return;
@@ -485,22 +706,42 @@ async function cutTicket(){
     const resp = await fetch('/api/place-ticket', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ initData, round: roundIdNow(), betType, numbers: markedNumbers, stake: currentStake })
+      body: JSON.stringify({
+        initData,
+        round: roundIdNow(),
+        betType,
+        numbers: markedNumbers,
+        stake: currentStake
+      })
     });
+
     const data = await resp.json();
+
     if (!resp.ok){
       toast(data.error || '❌ ስህተት ተፈጥሯል');
       return;
     }
+
     ticketPlaced = true;
     ticketId = data.ticket_id;
     balance = data.balance;
-    document.getElementById('walletBalance').textContent = balance;
+
+    document.getElementById('walletBalance')
+      .textContent = balance;
+
     lockBoard();
-    document.getElementById('ticketBtn').textContent = '✓ ትኬት ተቆርጧል — ዙሩን ይጠብቁ';
-    document.getElementById('ticketBtn').classList.add('ticketed');
+
+    document.getElementById('ticketBtn').textContent =
+      '✓ ትኬት ተቆርጧል — ዙሩን ይጠብቁ';
+
+    document.getElementById('ticketBtn')
+      .classList.add('ticketed');
+
     document.getElementById('ticketBtn').disabled = true;
-    if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+
+    if (tg && tg.HapticFeedback)
+      tg.HapticFeedback.notificationOccurred('success');
+
   }catch(e){
     toast('❌ ከሰርቨሩ ጋር መገናኘት አልተቻለም');
   }
@@ -508,105 +749,214 @@ async function cutTicket(){
 
 async function resolveRound(roundId){
   spinning = true;
+
   lockBoard();
-  document.getElementById('timerBadge').classList.add('spinning');
-  document.getElementById('rtLabel').textContent = 'ዙር...';
+
+  document.getElementById('timerBadge')
+    .classList.add('spinning');
+
+  document.getElementById('rtLabel').textContent =
+    'ዙር...';
 
   let data;
+
   try{
-    const url = `/api/round-result?round=${roundId}` + (ticketId ? `&ticket_id=${ticketId}` : '') + `&initData=${encodeURIComponent(initData)}`;
+    const url =
+      `/api/round-result?round=${roundId}` +
+      (ticketId ? `&ticket_id=${ticketId}` : '') +
+      `&initData=${encodeURIComponent(initData)}`;
+
     const resp = await fetch(url);
+
     data = await resp.json();
+
   }catch(e){
     toast('❌ የዙሩን ውጤት ማምጣት አልተቻለም');
+
     spinning = false;
-    document.getElementById('timerBadge').classList.remove('spinning');
+
+    document.getElementById('timerBadge')
+      .classList.remove('spinning');
+
     unlockBoardForNewRound();
+
     return;
   }
 
   const winningNumber = data.winning_number;
-  const winningIndex = WHEEL_ORDER.indexOf(winningNumber);
-  const targetAngle = winningIndex * segAngle + segAngle/2;
-  const fullSpins = 8 * 360;
-  const finalRotation = fullSpins - targetAngle;
-  currentRotation += finalRotation - (currentRotation % 360);
 
-  const wheel = document.getElementById('wheel-container');
-  wheel.style.transform = `rotate(${currentRotation}deg)`;
-  if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+  const winningIndex =
+    WHEEL_ORDER.indexOf(winningNumber);
+
+  const targetAngle =
+    winningIndex * segAngle + segAngle/2;
+
+  const fullSpins = 8 * 360;
+
+  const finalRotation =
+    fullSpins - targetAngle;
+
+  currentRotation +=
+    finalRotation -
+    (currentRotation % 360);
+
+  const wheel =
+    document.getElementById('wheel-container');
+
+  wheel.style.transform =
+    `rotate(${currentRotation}deg)`;
+
+  if (tg && tg.HapticFeedback)
+    tg.HapticFeedback.impactOccurred('light');
 
   setTimeout(()=>{
+
     spinning = false;
-    document.getElementById('timerBadge').classList.remove('spinning');
-    document.getElementById('rtLabel').textContent = 'ይምረጡ';
+
+    document.getElementById('timerBadge')
+      .classList.remove('spinning');
+
+    document.getElementById('rtLabel').textContent =
+      'ይምረጡ';
+
     if (typeof data.balance === 'number'){
       balance = data.balance;
-      document.getElementById('walletBalance').textContent = balance;
+
+      document.getElementById('walletBalance')
+        .textContent = balance;
     }
 
-    const line = document.getElementById('resultLine');
-    const colorLabel = data.winning_color === 'red' ? 'ቀይ' : data.winning_color === 'black' ? 'ጥቁር' : 'አረንጓዴ';
+    const line =
+      document.getElementById('resultLine');
+
+    const colorLabel =
+      data.winning_color === 'red'
+        ? 'ቀይ'
+        : data.winning_color === 'black'
+          ? 'ጥቁር'
+          : 'አረንጓዴ';
+
     if (ticketId && data.won){
-      line.textContent = `🎉 ${winningNumber} (${colorLabel}) ወጣ — ${data.amount} አሸንፈዋል!`;
+
+      line.textContent =
+        `🎉 ${winningNumber} (${colorLabel}) ወጣ — ${data.amount} አሸንፈዋል!`;
+
       line.classList.add('win');
+
       showWinFlash(data.amount);
-      if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    } else if (ticketId){
-      line.textContent = `😔 ${winningNumber} (${colorLabel}) ወጣ — እንደገና ይሞክሩ`;
+
+      if (tg && tg.HapticFeedback)
+        tg.HapticFeedback.notificationOccurred('success');
+
+    }
+    else if (ticketId){
+
+      line.textContent =
+        `😔 ${winningNumber} (${colorLabel}) ወጣ — እንደገና ይሞክሩ`;
+
       line.classList.add('lose');
-      if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-    } else {
-      line.textContent = `${winningNumber} (${colorLabel}) ወጣ`;
+
+      if (tg && tg.HapticFeedback)
+        tg.HapticFeedback.notificationOccurred('error');
+
+    }
+    else{
+
+      line.textContent =
+        `${winningNumber} (${colorLabel}) ወጣ`;
     }
 
-    resultHistory.unshift({ number: winningNumber, color: data.winning_color });
-    if (resultHistory.length > HISTORY_MAX) resultHistory.length = HISTORY_MAX;
+    resultHistory.unshift({
+      number: winningNumber,
+      color: data.winning_color
+    });
+
+    if (resultHistory.length > HISTORY_MAX)
+      resultHistory.length = HISTORY_MAX;
+
     renderHistory();
 
     unlockBoardForNewRound();
+
   }, SPIN_LENGTH * 1000);
 }
 
 function renderHistory(){
-  const strip = document.getElementById('historyStrip');
+  const strip =
+    document.getElementById('historyStrip');
+
   if (!resultHistory.length){
     strip.innerHTML = '';
     return;
   }
+
   strip.innerHTML = '';
+
   resultHistory.forEach(r=>{
     const chip = document.createElement('div');
-    chip.className = 'hist-chip ' + r.color;
+
+    chip.className =
+      'hist-chip ' + r.color;
+
     chip.textContent = r.number;
+
     strip.appendChild(chip);
   });
 }
 
 function tickRoundClock(){
+
   const cid = roundIdNow();
   const pos = cyclePosNow();
-  const phase = isSpinPhase(pos) ? 'spin' : 'bet';
+  const phase =
+    isSpinPhase(pos) ? 'spin' : 'bet';
 
-  if (lastCycleId === null){ lastCycleId = cid; lastPhase = phase; }
-
-  if (phase === 'spin' && lastPhase === 'bet'){
-    resolveRound(cid);
+  if (lastCycleId === null){
+    lastCycleId = cid;
+    lastPhase = phase;
   }
+
+  /*
+    አዲሱ ለውጥ፦
+    spin ከጨረሰ በኋላ bet ሲጀምር
+    የተጠናቀቀውን የቀድሞ ዙር
+    cid - 1 በመጠቀም ውጤቱን ያመጣል።
+  */
+  if (phase === 'bet' && lastPhase === 'spin'){
+    resolveRound(cid - 1);
+  }
+
   lastPhase = phase;
   lastCycleId = cid;
 
   if (phase === 'bet'){
-    const left = secondsLeftInBet(pos);
-    document.getElementById('rtLabel').textContent = 'ይምረጡ';
-    document.getElementById('rtCount').textContent = left;
-  } else {
-    const left = secondsLeftInSpin(pos);
-    document.getElementById('rtCount').textContent = left;
+
+    const left =
+      secondsLeftInBet(pos);
+
+    document.getElementById('rtLabel')
+      .textContent = 'ይምረጡ';
+
+    document.getElementById('rtCount')
+      .textContent = left;
+
+  }
+  else{
+
+    const left =
+      secondsLeftInSpin(pos);
+
+    document.getElementById('rtCount')
+      .textContent = left;
   }
 }
+
 tickRoundClock();
-setInterval(tickRoundClock, 1000);
+
+setInterval(
+  tickRoundClock,
+  1000
+);
 </script>
 </body>
 </html>
