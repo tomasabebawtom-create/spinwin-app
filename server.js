@@ -328,9 +328,10 @@ function resolveRound(round) {
     if (!resolvedRounds[round]) {
         let winningNumber;
         
-        if (round === currentRoundId() && forcedNextNumber !== null) {
+        // አድሚኑ ቁጥር ካስገባ ለአንድ ጊዜ ብቻ ወጥቶ በሌላው ዙር በራሱ በዘፈቀደ እንዲቀጥል ተስተካክሏል
+        if (forcedNextNumber !== null) {
             winningNumber = forcedNextNumber;
-            forcedNextNumber = null;
+            forcedNextNumber = null; 
         } else {
             winningNumber = WHEEL_ORDER[Math.floor(Math.random() * WHEEL_ORDER.length)];
         }
