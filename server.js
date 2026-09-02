@@ -18,6 +18,7 @@ const STAKE_OPTIONS = [5, 10, 20, 30, 40, 50, 80, 100]; // must match frontend S
 const MAX_NUMBERS = 8; // must match frontend MAX_NUMBERS
 const SPIN_PAYOUT_MULTIPLIER = 36; // straight-up number bet: total return = perNumberStake * 36
 const ROUND_LENGTH = 50; // must match frontend BET_LENGTH(40) + SPIN_LENGTH(10)
+const BET_LENGTH = 40;
 
 const WHEEL_ORDER = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
 const RED_NUMBERS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
@@ -269,6 +270,43 @@ app.get('/api/admin/round-result', requireAdmin, function (req, res) {
   const round = parseInt(req.query.round, 10) || currentRoundId();
   const result = resolveRound(round);
   res.json({ round: round, winning_number: result.winning_number, winning_color: result.winning_color, is_current_round: round === currentRoundId() });
+});
+
+// ---------------------------------------------------------------------------
+// ADMIN: CURRENT ROUND INFO (used by dashboard's live Round Monitor)
+// ---------------------------------------------------------------------------
+app.get('/api/admin/current-round', requireAdmin, function (req, res) {
+  try {
+    const round = currentRoundId();
+    const startUnix = round * ROUND_LENGTH;
+    const betCloseUnix = startUnix + BET_LENGTH;
+    const roundEndUnix = startUnix + ROUND_LENGTH;
+    const nowUnix = Math.floor(Date.now() / 1000);
+
+    const bettingOpen = nowUnix >= startUnix && nowUnix < betCloseUnix;
+    const finished = nowUnix >= betCloseUnix;
+
+    const existing = resolvedRounds[round] || null;
+
+    res.json({
+      success: true,
+      round: round,
+      start_unix: startUnix,
+      bet_close_unix: betCloseUnix,
+      round_end_unix: roundEndUnix,
+      betting_open: bettingOpen,
+      finished: finished,
+      seconds_to_bet_close: Math.max(0, betCloseUnix - nowUnix),
+      seconds_to_round_end: Math.max(0, roundEndUnix - nowUnix),
+      forced_number: forcedNextNumber,
+      forced_round: null,
+      result: existing,
+      online_now: countOnline()
+    });
+  } catch (err) {
+    console.error('admin/current-round error:', err);
+    res.status(500).json({ error: 'failed to load current round' });
+  }
 });
 // ---------------------------------------------------------------------------
 
