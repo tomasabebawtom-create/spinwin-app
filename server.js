@@ -14,7 +14,7 @@ const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const DATABASE_URL = process.env.DATABASE_URL || '';
 const ADMIN_SECRET = process.env.ADMIN_SECRET || '';
 const STARTING_BALANCE = 0;
-const STAKE_OPTIONS = [5, 10, 20, 30, 40, 50, 80, 100]; // must match frontend STAKE_OPTIONS
+const STAKE_OPTIONS = [5, 10, 20, 30, 40, 50, 80, 100, 200]; // must match frontend STAKE_OPTIONS
 const MAX_NUMBERS = 8; // must match frontend MAX_NUMBERS
 const SPIN_PAYOUT_MULTIPLIER = 36; // straight-up number bet: total return = perNumberStake * 36
 const ROUND_LENGTH = 50; // must match frontend BET_LENGTH(40) + SPIN_LENGTH(10)
