@@ -86,6 +86,72 @@ body{
   color:var(--gold);
 }
 
+
+/* =========================================================
+   DEMO TICKER
+========================================================= */
+
+.winner-ticker{
+  width:100%;
+  min-height:48px;
+  margin-bottom:8px;
+  padding:8px 12px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+
+  background:linear-gradient(
+    160deg,
+    #173d27,
+    #0d2416
+  );
+
+  border:1px solid var(--gold-dim);
+  border-radius:12px;
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,.4);
+
+  overflow:hidden;
+}
+
+.winner-ticker .ticker-main{
+  display:block;
+  color:var(--gold);
+  font-size:14px;
+  font-weight:900;
+  line-height:1.2;
+  white-space:nowrap;
+  animation:tickerFade .45s ease;
+}
+
+.winner-ticker .ticker-demo{
+  display:block;
+  color:var(--text-dim);
+  font-size:8px;
+  font-weight:700;
+  margin-top:2px;
+}
+
+@keyframes tickerFade{
+  from{
+    opacity:0;
+    transform:translateY(8px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+
+/* =========================================================
+   WALLET
+========================================================= */
+
 .wallet-row{
   display:flex;
   gap:8px;
@@ -113,6 +179,11 @@ body{
   color:var(--gold);
 }
 
+
+/* =========================================================
+   WHEEL
+========================================================= */
+
 #wheel-wrapper{
   position:relative;
   width:280px;
@@ -125,6 +196,7 @@ body{
   position:absolute;
   inset:-10px;
   border-radius:50%;
+
   background:conic-gradient(
     from 0deg,
     #fff8dc,
@@ -135,6 +207,7 @@ body{
     #c99b1f,
     #fff8dc
   );
+
   box-shadow:
     inset 0 0 0 3px rgba(0,0,0,.35),
     0 0 0 2px rgba(0,0,0,.4);
@@ -145,7 +218,11 @@ body{
   position:absolute;
   inset:9px;
   border-radius:50%;
-  background:radial-gradient(circle at 35% 25%,#2a2a2a,#0a0a0a 70%);
+  background:radial-gradient(
+    circle at 35% 25%,
+    #2a2a2a,
+    #0a0a0a 70%
+  );
 }
 
 #top-arc{
@@ -173,11 +250,15 @@ body{
   transform:translateX(-50%);
   width:0;
   height:0;
+
   border-left:11px solid transparent;
   border-right:11px solid transparent;
   border-top:20px solid var(--gold);
+
   z-index:7;
-  filter:drop-shadow(0 3px 5px rgba(0,0,0,.6));
+
+  filter:
+    drop-shadow(0 3px 5px rgba(0,0,0,.6));
 }
 
 #wheel-container{
@@ -185,8 +266,14 @@ body{
   height:280px;
   border-radius:50%;
   position:relative;
-  transition:transform 9.6s cubic-bezier(0.10,0.68,0.08,1);
+
+  transition:
+    transform 9.6s cubic-bezier(
+      0.10,0.68,0.08,1
+    );
+
   overflow:hidden;
+
   box-shadow:
     inset 0 0 22px rgba(0,0,0,.65),
     inset 0 0 0 2px rgba(0,0,0,.5);
@@ -203,20 +290,26 @@ body{
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
+
   width:82px;
   height:82px;
+
   background:radial-gradient(
     circle at 35% 28%,
     #5a6fd8,
     #2438a8 55%,
     #141d5e
   );
+
   border-radius:50%;
+
   display:flex;
   align-items:center;
   justify-content:center;
   flex-direction:column;
+
   z-index:4;
+
   box-shadow:
     0 0 0 4px #d9c98a,
     0 0 0 6px rgba(0,0,0,.5),
@@ -231,17 +324,33 @@ body{
   letter-spacing:.5px;
   line-height:1.25;
   text-align:center;
-  text-shadow:0 1px 2px rgba(0,0,0,.6);
+
+  text-shadow:
+    0 1px 2px rgba(0,0,0,.6);
 }
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
 
 .history-corner{
   width:100%;
   margin-bottom:8px;
-  background:linear-gradient(160deg,#173d27,#0d2416);
+
+  background:linear-gradient(
+    160deg,
+    #173d27,
+    #0d2416
+  );
+
   border:1px solid var(--gold-dim);
   border-radius:10px;
+
   padding:6px 8px;
-  box-shadow:0 4px 10px rgba(0,0,0,.4);
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,.4);
 }
 
 .hc-title{
@@ -266,26 +375,43 @@ body{
   width:22px;
   height:22px;
   border-radius:50%;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   font-size:10px;
   font-weight:900;
   color:#fff;
-  text-shadow:0 1px 2px rgba(0,0,0,.5);
+
+  text-shadow:
+    0 1px 2px rgba(0,0,0,.5);
+
   border:1px solid rgba(255,255,255,.25);
 }
 
 .hist-chip.red{
-  background:linear-gradient(160deg,var(--red),var(--red2));
+  background:linear-gradient(
+    160deg,
+    var(--red),
+    var(--red2)
+  );
 }
 
 .hist-chip.black{
-  background:linear-gradient(160deg,#2a2a2a,#111);
+  background:linear-gradient(
+    160deg,
+    #2a2a2a,
+    #111
+  );
 }
 
 .hist-chip.green{
-  background:linear-gradient(160deg,#1fae74,#128c5c);
+  background:linear-gradient(
+    160deg,
+    #1fae74,
+    #128c5c
+  );
 }
 
 .hist-empty{
@@ -294,21 +420,38 @@ body{
   white-space:nowrap;
 }
 
+
+/* =========================================================
+   TIMER
+========================================================= */
+
 .timer-badge{
   position:absolute;
   top:-4px;
   right:-4px;
+
   z-index:9;
+
   width:52px;
   height:52px;
+
   border-radius:50%;
-  background:radial-gradient(circle at 35% 28%,#1f5c38,#0d2416);
+
+  background:radial-gradient(
+    circle at 35% 28%,
+    #1f5c38,
+    #0d2416
+  );
+
   border:2px solid var(--gold);
+
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  box-shadow:0 4px 10px rgba(0,0,0,.5);
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,.5);
 }
 
 .timer-badge .tb-count{
@@ -333,6 +476,11 @@ body{
   color:#18b673;
 }
 
+
+/* =========================================================
+   RESULT
+========================================================= */
+
 .result-line{
   min-height:26px;
   text-align:center;
@@ -349,14 +497,21 @@ body{
   color:var(--text-dim);
 }
 
+
+/* =========================================================
+   STAKE BOX
+========================================================= */
+
 .stake-box{
   background:linear-gradient(
     160deg,
     rgba(245,197,66,.10),
     rgba(245,197,66,.02)
   );
+
   border:1px solid var(--gold-dim);
   border-radius:14px;
+
   padding:8px 4px;
   margin-bottom:10px;
 }
@@ -365,12 +520,99 @@ body{
   display:flex;
   align-items:center;
   gap:6px;
+
   color:var(--gold);
   font-weight:700;
+
   margin-bottom:8px;
+
   font-size:13px;
   padding:0 4px;
 }
+
+
+/* =========================================================
+   STAKE PICKER - 9 OPTIONS STRETCHED
+========================================================= */
+
+.stake-picker{
+  display:block;
+  margin-bottom:7px;
+  padding:0 2px;
+}
+
+.stake-picker .sp-label{
+  display:block;
+
+  font-size:11px;
+  color:var(--text-dim);
+  font-weight:700;
+
+  margin-bottom:6px;
+
+  white-space:nowrap;
+}
+
+.stake-chips{
+  display:grid;
+
+  grid-template-columns:
+    repeat(9,minmax(0,1fr));
+
+  gap:3px;
+
+  width:100%;
+}
+
+.stake-chip{
+  min-width:0;
+  width:100%;
+
+  text-align:center;
+
+  padding:7px 1px;
+
+  border-radius:7px;
+
+  font-weight:800;
+  font-size:11px;
+
+  color:var(--text);
+
+  background:rgba(255,255,255,.06);
+
+  border:1px solid rgba(255,255,255,.18);
+
+  cursor:pointer;
+
+  transition:.12s;
+
+  user-select:none;
+}
+
+.stake-chip:active{
+  transform:scale(.96);
+}
+
+.stake-chip.active{
+  background:linear-gradient(
+    90deg,
+    var(--gold),
+    #e0a92f
+  );
+
+  color:#2b1140;
+
+  border-color:var(--gold);
+
+  box-shadow:
+    0 0 8px rgba(245,197,66,.5);
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
 
 .table-felt{
   background:radial-gradient(
@@ -378,77 +620,130 @@ body{
     var(--felt),
     var(--felt2) 80%
   );
+
   border:2px solid var(--gold-dim);
   border-radius:12px;
+
   padding:8px 3px;
-  box-shadow:inset 0 0 14px rgba(0,0,0,.5);
+
+  box-shadow:
+    inset 0 0 14px rgba(0,0,0,.5);
 }
 
 .zero-row{
-  background:linear-gradient(180deg,#1fae74,#128c5c);
+  background:linear-gradient(
+    180deg,
+    #1fae74,
+    #128c5c
+  );
+
   color:#fff;
+
   text-align:center;
+
   font-weight:900;
   font-size:16px;
+
   padding:8px 0;
+
   border-radius:6px;
+
   margin-bottom:4px;
+
   cursor:pointer;
+
   border:1px solid rgba(255,255,255,.15);
+
   transition:.15s;
 }
 
 .zero-row.selected{
   outline:2px solid var(--gold);
-  box-shadow:0 0 8px var(--gold);
+
+  box-shadow:
+    0 0 8px var(--gold);
+
   transform:scale(1.02);
 }
 
 .num-grid{
   display:grid;
-  grid-template-columns:repeat(12,1fr);
-  grid-template-rows:repeat(3,1fr);
+
+  grid-template-columns:
+    repeat(12,1fr);
+
+  grid-template-rows:
+    repeat(3,1fr);
+
   grid-auto-flow:column;
+
   gap:3px;
+
   width:100%;
 }
 
 .num-cell{
   aspect-ratio:1/1.55;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   font-size:15px;
   font-weight:900;
+
   color:#fff;
+
   cursor:pointer;
+
   border-radius:5px;
+
   border:1px solid rgba(0,0,0,.35);
+
   transition:.12s;
+
   user-select:none;
-  text-shadow:0 1px 2px rgba(0,0,0,.5);
+
+  text-shadow:
+    0 1px 2px rgba(0,0,0,.5);
 }
 
 .num-cell.red{
-  background:linear-gradient(160deg,var(--red),var(--red2));
+  background:linear-gradient(
+    160deg,
+    var(--red),
+    var(--red2)
+  );
 }
 
 .num-cell.black{
-  background:linear-gradient(160deg,#2a2a2a,#111);
+  background:linear-gradient(
+    160deg,
+    #2a2a2a,
+    #111
+  );
 }
 
 .num-cell.marked{
   outline:3px solid var(--gold);
-  box-shadow:0 0 10px var(--gold);
+
+  box-shadow:
+    0 0 10px var(--gold);
+
   transform:scale(1.14);
+
   z-index:2;
+
   position:relative;
+
   background:linear-gradient(
     160deg,
     #ffd76b,
     #e0a92f
   ) !important;
+
   color:#2b1140 !important;
+
   text-shadow:none;
 }
 
@@ -467,6 +762,11 @@ body{
   opacity:.55;
 }
 
+
+/* =========================================================
+   OUTSIDE BETS
+========================================================= */
+
 .dozens-row,
 .outside-row,
 .columns-row{
@@ -477,16 +777,26 @@ body{
 
 .outside-cell{
   flex:1;
+
   text-align:center;
+
   color:#fff;
+
   font-weight:700;
   font-size:12.5px;
+
   padding:11px 2px;
+
   border-radius:6px;
+
   cursor:pointer;
+
   background:rgba(255,255,255,.06);
+
   border:1px solid rgba(255,255,255,.15);
+
   transition:.12s;
+
   line-height:1.3;
 }
 
@@ -498,23 +808,42 @@ body{
 }
 
 .outside-cell.red-cell{
-  background:linear-gradient(160deg,var(--red),var(--red2));
+  background:linear-gradient(
+    160deg,
+    var(--red),
+    var(--red2)
+  );
 }
 
 .outside-cell.black-cell{
-  background:linear-gradient(160deg,#2a2a2a,#111);
+  background:linear-gradient(
+    160deg,
+    #2a2a2a,
+    #111
+  );
 }
 
 .outside-cell.selected{
   outline:2px solid var(--gold);
-  box-shadow:0 0 8px var(--gold);
+
+  box-shadow:
+    0 0 8px var(--gold);
+
   background:rgba(245,197,66,.18);
 }
 
+
+/* =========================================================
+   SELECTED
+========================================================= */
+
 .selected-line{
   text-align:center;
+
   margin-top:10px;
+
   font-size:12.5px;
+
   color:var(--text-dim);
 }
 
@@ -524,8 +853,11 @@ body{
 
 .spin-cost{
   text-align:center;
+
   color:var(--text-dim);
+
   font-size:12px;
+
   margin-top:4px;
 }
 
@@ -533,64 +865,41 @@ body{
   color:var(--gold);
 }
 
-.stake-picker{
-  display:flex;
-  align-items:center;
-  gap:5px;
-  margin-bottom:6px;
-  padding:0 4px;
-}
 
-.stake-picker .sp-label{
-  font-size:11px;
-  color:var(--text-dim);
-  font-weight:700;
-  margin-right:2px;
-  white-space:nowrap;
-}
-
-.stake-chips{
-  display:flex;
-  gap:4px;
-  flex:1;
-  flex-wrap:wrap;
-}
-
-.stake-chip{
-  flex:1;
-  min-width:28px;
-  text-align:center;
-  padding:5px 3px;
-  border-radius:7px;
-  font-weight:800;
-  font-size:11.5px;
-  color:var(--text);
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.18);
-  cursor:pointer;
-  transition:.12s;
-}
-
-.stake-chip.active{
-  background:linear-gradient(90deg,var(--gold),#e0a92f);
-  color:#2b1140;
-  border-color:var(--gold);
-  box-shadow:0 0 8px rgba(245,197,66,.5);
-}
+/* =========================================================
+   BUTTON
+========================================================= */
 
 .confirm-btn{
   width:100%;
+
   border:none;
+
   border-radius:10px;
+
   padding:14px;
+
   margin-top:8px;
+
   font-family:Georgia,'Times New Roman',serif;
+
   letter-spacing:.4px;
+
   font-size:17px;
+
   font-weight:800;
+
   color:#2b1140;
-  background:linear-gradient(90deg,var(--gold),#e0a92f);
-  box-shadow:0 6px 16px rgba(245,197,66,.35);
+
+  background:linear-gradient(
+    90deg,
+    var(--gold),
+    #e0a92f
+  );
+
+  box-shadow:
+    0 6px 16px rgba(245,197,66,.35);
+
   cursor:pointer;
 }
 
@@ -600,14 +909,22 @@ body{
 }
 
 .confirm-btn.ticketed{
-  background:linear-gradient(90deg,#18b673,#0f8f5a);
+  background:linear-gradient(
+    90deg,
+    #18b673,
+    #0f8f5a
+  );
+
   color:#fff;
 }
 
 .marked-count{
   text-align:center;
+
   font-size:12px;
+
   color:var(--text-dim);
+
   margin-top:6px;
 }
 
@@ -615,53 +932,99 @@ body{
   color:var(--gold);
 }
 
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
 .msg{
   position:fixed;
+
   top:14px;
   left:50%;
+
   transform:translateX(-50%);
+
   background:#0d2416;
+
   border:1px solid var(--gold);
+
   color:var(--text);
+
   padding:10px 18px;
+
   border-radius:12px;
+
   font-size:13px;
+
   font-weight:700;
+
   z-index:50;
+
   display:none;
-  box-shadow:0 6px 16px rgba(0,0,0,.4);
+
+  box-shadow:
+    0 6px 16px rgba(0,0,0,.4);
+
   max-width:88%;
+
   text-align:center;
 }
 
+
+/* =========================================================
+   WIN FLASH
+========================================================= */
+
 .win-flash{
   position:fixed;
+
   inset:0;
+
   display:none;
+
   align-items:center;
   justify-content:center;
+
   background:rgba(0,0,0,.55);
+
   z-index:60;
 }
 
 .win-flash.show{
   display:flex;
-  animation:winFadeOut 2.4s forwards;
+
+  animation:
+    winFadeOut 2.4s forwards;
 }
 
 .win-flash-inner{
-  background:linear-gradient(160deg,#ffe08a,#e0a92f);
+  background:linear-gradient(
+    160deg,
+    #ffe08a,
+    #e0a92f
+  );
+
   color:#2b1140;
+
   padding:26px 34px;
+
   border-radius:20px;
+
   font-size:22px;
+
   font-weight:900;
+
   text-align:center;
+
   max-width:80%;
+
   box-shadow:
     0 0 40px rgba(245,197,66,.8),
     0 10px 30px rgba(0,0,0,.5);
-  animation:winPop .5s cubic-bezier(.3,1.6,.5,1);
+
+  animation:
+    winPop .5s cubic-bezier(.3,1.6,.5,1);
 }
 
 @keyframes winPop{
@@ -669,9 +1032,11 @@ body{
     transform:scale(.3);
     opacity:0;
   }
+
   60%{
     transform:scale(1.1);
   }
+
   100%{
     transform:scale(1);
     opacity:1;
@@ -682,12 +1047,39 @@ body{
   0%{
     opacity:1;
   }
+
   75%{
     opacity:1;
   }
+
   100%{
     opacity:0;
     display:none;
+  }
+}
+
+
+/* =========================================================
+   SMALL SCREEN
+========================================================= */
+
+@media(max-width:360px){
+
+  .stake-chips{
+    gap:2px;
+  }
+
+  .stake-chip{
+    font-size:9.5px;
+    padding:7px 0;
+  }
+
+  .winner-ticker .ticker-main{
+    font-size:12px;
+  }
+
+  .num-cell{
+    font-size:13px;
   }
 }
 </style>
@@ -705,32 +1097,107 @@ body{
 
   <div class="topbar">
     <div class="logo">S</div>
-    <div class="brand">Spin <span>Win</span></div>
+    <div class="brand">
+      Spin <span>Win</span>
+    </div>
   </div>
+
+
+  <!-- =====================================================
+       DEMO / SIMULATED TICKER
+  ====================================================== -->
+
+  <div class="winner-ticker">
+
+    <div>
+
+      <span
+        class="ticker-main"
+        id="tickerText"
+      >
+        🎉 DEMO — የማሳያ ውጤት
+      </span>
+
+      <span class="ticker-demo">
+        DEMO / SIMULATED
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       HISTORY
+  ====================================================== -->
 
   <div class="history-corner">
-    <div class="hc-title">ውጤቶች</div>
-    <div class="history-strip" id="historyStrip"></div>
+
+    <div class="hc-title">
+      ውጤቶች
+    </div>
+
+    <div
+      class="history-strip"
+      id="historyStrip"
+    ></div>
+
   </div>
+
+
+  <!-- =====================================================
+       WALLET
+  ====================================================== -->
 
   <div class="wallet-row">
-    <div class="wallet-chip">
-      <div class="label">ሂሳብ</div>
-      <div class="value" id="walletBalance">–</div>
-    </div>
 
     <div class="wallet-chip">
-      <div class="label">ውርርድ ዋጋ</div>
-      <div class="value" id="walletStake">10</div>
+
+      <div class="label">
+        ሂሳብ
+      </div>
+
+      <div
+        class="value"
+        id="walletBalance"
+      >
+        –
+      </div>
+
     </div>
+
+
+    <div class="wallet-chip">
+
+      <div class="label">
+        ውርርድ ዋጋ
+      </div>
+
+      <div
+        class="value"
+        id="walletStake"
+      >
+        10
+      </div>
+
+    </div>
+
   </div>
+
+
+  <!-- =====================================================
+       WHEEL
+  ====================================================== -->
 
   <div id="wheel-wrapper">
 
     <div id="wheel-bezel"></div>
 
+
     <div id="top-arc">
+
       <svg viewBox="0 0 150 52">
+
         <path
           d="M15,50 A60,60 0 0 1 135,50"
           fill="none"
@@ -738,27 +1205,72 @@ body{
           stroke-width="4"
           stroke-linecap="round"
         />
+
       </svg>
+
     </div>
+
 
     <div id="pointer"></div>
 
+
     <div id="wheel-container">
-      <svg id="wheel-svg" viewBox="0 0 300 300"></svg>
+
+      <svg
+        id="wheel-svg"
+        viewBox="0 0 300 300"
+      ></svg>
+
     </div>
+
 
     <div id="hub">
-      <div class="htxt">SPIN<br>WIN</div>
+
+      <div class="htxt">
+        SPIN<br>
+        WIN
+      </div>
+
     </div>
 
-    <div class="timer-badge" id="timerBadge">
-      <div class="tb-count" id="rtCount">40</div>
-      <div class="tb-label" id="rtLabel">ይምረጡ</div>
+
+    <div
+      class="timer-badge"
+      id="timerBadge"
+    >
+
+      <div
+        class="tb-count"
+        id="rtCount"
+      >
+        40
+      </div>
+
+      <div
+        class="tb-label"
+        id="rtLabel"
+      >
+        ይምረጡ
+      </div>
+
     </div>
 
   </div>
 
-  <div class="result-line" id="resultLine"></div>
+
+  <!-- =====================================================
+       RESULT
+  ====================================================== -->
+
+  <div
+    class="result-line"
+    id="resultLine"
+  ></div>
+
+
+  <!-- =====================================================
+       STAKE
+  ====================================================== -->
 
   <div class="stake-box">
 
@@ -766,17 +1278,28 @@ body{
       ▷ በሠንጠረዡ ላይ ቁጥር ወይም ምርጫ በጣትዎ ይንኩ
     </div>
 
+
     <div class="stake-picker">
 
       <div class="sp-label">
         ውርርድ መጠን፦
       </div>
 
-      <div class="stake-chips" id="stakeChips"></div>
+
+      <div
+        class="stake-chips"
+        id="stakeChips"
+      ></div>
 
     </div>
 
+
+    <!-- ===================================================
+         TABLE
+    ==================================================== -->
+
     <div class="table-felt">
+
 
       <div
         class="zero-row"
@@ -786,50 +1309,90 @@ body{
         0
       </div>
 
-      <div class="num-grid" id="numGrid"></div>
+
+      <div
+        class="num-grid"
+        id="numGrid"
+      ></div>
+
 
       <div class="dozens-row">
 
-        <div class="outside-cell" data-bet="dozen1">
+        <div
+          class="outside-cell"
+          data-bet="dozen1"
+        >
           1ኛ ደርዘን<br>
           <small>1–12 · 3x</small>
         </div>
 
-        <div class="outside-cell" data-bet="dozen2">
+
+        <div
+          class="outside-cell"
+          data-bet="dozen2"
+        >
           2ኛ ደርዘን<br>
           <small>13–24 · 3x</small>
         </div>
 
-        <div class="outside-cell" data-bet="dozen3">
+
+        <div
+          class="outside-cell"
+          data-bet="dozen3"
+        >
           3ኛ ደርዘን<br>
           <small>25–36 · 3x</small>
         </div>
 
       </div>
 
+
       <div class="outside-row">
 
-        <div class="outside-cell" data-bet="low">
+        <div
+          class="outside-cell"
+          data-bet="low"
+        >
           1–18
         </div>
 
-        <div class="outside-cell" data-bet="even">
+
+        <div
+          class="outside-cell"
+          data-bet="even"
+        >
           ጥምዝ
         </div>
 
-        <div class="outside-cell red-cell" data-bet="red">
+
+        <div
+          class="outside-cell red-cell"
+          data-bet="red"
+        >
           ቀይ
         </div>
 
-        <div class="outside-cell black-cell" data-bet="black">
+
+        <div
+          class="outside-cell black-cell"
+          data-bet="black"
+        >
           ጥቁር
         </div>
 
-        <div class="outside-cell" data-bet="odd">
+
+        <div
+          class="outside-cell"
+          data-bet="odd"
+        >
           ጎዶሎ
         </div>
 
-        <div class="outside-cell" data-bet="high">
+
+        <div
+          class="outside-cell"
+          data-bet="high"
+        >
           19–36
         </div>
 
@@ -837,20 +1400,42 @@ body{
 
     </div>
 
+
     <div class="selected-line">
+
       የተመረጠው ውርርድ፦
-      <b id="selectedLabel">— ገና አልተመረጠም —</b>
+
+      <b id="selectedLabel">
+        — ገና አልተመረጠም —
+      </b>
+
     </div>
 
-    <div class="marked-count" id="markedCount"></div>
+
+    <div
+      class="marked-count"
+      id="markedCount"
+    ></div>
+
 
     <div class="spin-cost">
+
       እያንዳንዱ ቁጥር
-      <b id="spinCostLabel">10</b>
+
+      <b id="spinCostLabel">
+        10
+      </b>
+
       ብር ያስከፍላል
+
     </div>
 
   </div>
+
+
+  <!-- =====================================================
+       TICKET BUTTON
+  ====================================================== -->
 
   <button
     class="confirm-btn"
@@ -861,6 +1446,7 @@ body{
   </button>
 
 </div>
+
 
 <script>
 
@@ -873,19 +1459,36 @@ const tg =
     ? window.Telegram.WebApp
     : null;
 
+
 if (tg) {
+
   try {
+
     tg.ready();
+
     tg.expand();
+
   } catch(e) {
-    console.warn('Telegram init error:', e);
+
+    console.warn(
+      'Telegram init error:',
+      e
+    );
+
   }
+
 }
 
+
 const initData =
-  (tg && tg.initData)
+  (
+    tg &&
+    tg.initData
+  )
     ? tg.initData
     : '';
+
+
 
 /* =========================================================
    HELPERS
@@ -894,27 +1497,46 @@ const initData =
 function toast(text){
 
   const m =
-    document.getElementById('msg');
+    document.getElementById(
+      'msg'
+    );
 
-  m.textContent = text;
-  m.style.display = 'block';
+  m.textContent =
+    text;
 
-  clearTimeout(window._toastTimer);
+  m.style.display =
+    'block';
+
+  clearTimeout(
+    window._toastTimer
+  );
 
   window._toastTimer =
-    setTimeout(() => {
-      m.style.display = 'none';
-    }, 3000);
+    setTimeout(
+      () => {
+
+        m.style.display =
+          'none';
+
+      },
+      3000
+    );
+
 }
+
 
 
 function showWinFlash(amount){
 
   const el =
-    document.getElementById('winFlash');
+    document.getElementById(
+      'winFlash'
+    );
 
   const inner =
-    document.getElementById('winFlashInner');
+    document.getElementById(
+      'winFlashInner'
+    );
 
   const safeAmount =
     Number(amount) || 0;
@@ -924,71 +1546,130 @@ function showWinFlash(amount){
     safeAmount +
     ' ብር አሸንፈዋል 🎉';
 
-  el.classList.remove('show');
+  el.classList.remove(
+    'show'
+  );
 
   void el.offsetWidth;
 
-  el.classList.add('show');
+  el.classList.add(
+    'show'
+  );
 
-  clearTimeout(window._winTimer);
+  clearTimeout(
+    window._winTimer
+  );
 
   window._winTimer =
-    setTimeout(() => {
-      el.classList.remove('show');
-    }, 2400);
+    setTimeout(
+      () => {
+
+        el.classList.remove(
+          'show'
+        );
+
+      },
+      2400
+    );
+
 }
+
 
 
 /* =========================================================
    GAME STATE
 ========================================================= */
 
-let betType = null;
+let betType =
+  null;
 
-let markedNumbers = [];
+let markedNumbers =
+  [];
 
-let balance = 0;
+let balance =
+  0;
 
-let spinning = false;
+let spinning =
+  false;
 
-let ticketPlaced = false;
+let ticketPlaced =
+  false;
 
-let ticketId = null;
+let ticketId =
+  null;
 
-let resolvingRound = false;
+let resolvingRound =
+  false;
 
-let resolvedRounds = new Set();
+let resolvedRounds =
+  new Set();
 
-let resultHistory = [];
+let resultHistory =
+  [];
+
 
 
 /* =========================================================
    STAKES
 ========================================================= */
 
+/*
+  UPDATED:
+  5,10,20,30,40,50,80,100,200
+*/
+
 const STAKE_OPTIONS =
-  [5,10,20,30,40,50];
+  [
+    5,
+    10,
+    20,
+    30,
+    40,
+    50,
+    80,
+    100,
+    200
+  ];
 
-const STAKE_MIN = 5;
-const STAKE_MAX = 50;
 
-let currentStake = 10;
+const STAKE_MIN =
+  5;
 
-const MAX_NUMBERS = 8;
+
+/*
+  Maximum stake updated
+*/
+
+const STAKE_MAX =
+  200;
+
+
+let currentStake =
+  10;
+
+
+const MAX_NUMBERS =
+  8;
+
 
 
 /* =========================================================
    ROUND
 ========================================================= */
 
-const BET_LENGTH = 40;
+const BET_LENGTH =
+  40;
 
-const SPIN_LENGTH = 10;
+const SPIN_LENGTH =
+  10;
 
 const CYCLE_LENGTH =
-  BET_LENGTH + SPIN_LENGTH;
+  BET_LENGTH +
+  SPIN_LENGTH;
 
-const HISTORY_MAX = 10;
+const HISTORY_MAX =
+  10;
+
 
 
 /* =========================================================
@@ -1001,28 +1682,43 @@ async function refreshBalance(){
 
     const resp =
       await fetch(
-        `/api/balance?initData=${encodeURIComponent(initData)}`,
+        `/api/balance?initData=${
+          encodeURIComponent(
+            initData
+          )
+        }`,
         {
           method:'GET',
           cache:'no-store'
         }
       );
 
-    if (!resp.ok) {
+
+    if (!resp.ok){
+
       throw new Error(
-        'Balance HTTP ' + resp.status
+        'Balance HTTP ' +
+        resp.status
       );
+
     }
+
 
     const data =
       await resp.json();
 
+
     balance =
-      Number(data.balance ?? 0);
+      Number(
+        data.balance ?? 0
+      );
+
 
     document.getElementById(
       'walletBalance'
-    ).textContent = balance;
+    ).textContent =
+      balance;
+
 
   }catch(e){
 
@@ -1031,13 +1727,19 @@ async function refreshBalance(){
       e
     );
 
+
     document.getElementById(
       'walletBalance'
-    ).textContent = '–';
+    ).textContent =
+      '–';
+
   }
+
 }
 
+
 refreshBalance();
+
 
 
 /* =========================================================
@@ -1045,78 +1747,264 @@ refreshBalance();
 ========================================================= */
 
 const stakeChipsEl =
-  document.getElementById('stakeChips');
+  document.getElementById(
+    'stakeChips'
+  );
+
 
 
 function renderStakeChips(){
 
-  stakeChipsEl.innerHTML = '';
+  stakeChipsEl.innerHTML =
+    '';
 
-  STAKE_OPTIONS.forEach(v => {
 
-    const chip =
-      document.createElement('div');
+  STAKE_OPTIONS.forEach(
+    v => {
 
-    chip.className =
-      'stake-chip' +
-      (v === currentStake
-        ? ' active'
-        : '');
+      const chip =
+        document.createElement(
+          'div'
+        );
 
-    chip.textContent = v;
 
-    chip.addEventListener(
-      'click',
-      () => {
+      chip.className =
+        'stake-chip' +
+        (
+          v === currentStake
+            ? ' active'
+            : ''
+        );
 
-        if (
-          ticketPlaced ||
-          spinning
-        ) return;
 
-        currentStake = v;
+      chip.textContent =
+        v;
 
-        document.getElementById(
-          'walletStake'
-        ).textContent =
-          currentStake;
 
-        document.getElementById(
-          'spinCostLabel'
-        ).textContent =
-          currentStake;
+      chip.addEventListener(
+        'click',
+        () => {
 
-        renderStakeChips();
+          if (
+            ticketPlaced ||
+            spinning
+          ){
 
-        refreshSelectedLine();
+            return;
 
-        if (
-          tg &&
-          tg.HapticFeedback
-        ){
-          tg.HapticFeedback
-            .selectionChanged();
+          }
+
+
+          currentStake =
+            v;
+
+
+          document.getElementById(
+            'walletStake'
+          ).textContent =
+            currentStake;
+
+
+          document.getElementById(
+            'spinCostLabel'
+          ).textContent =
+            currentStake;
+
+
+          renderStakeChips();
+
+
+          refreshSelectedLine();
+
+
+          if (
+            tg &&
+            tg.HapticFeedback
+          ){
+
+            tg.HapticFeedback
+              .selectionChanged();
+
+          }
+
         }
+      );
 
-      }
-    );
 
-    stakeChipsEl.appendChild(chip);
+      stakeChipsEl.appendChild(
+        chip
+      );
 
-  });
+    }
+  );
+
 }
 
+
 renderStakeChips();
+
 
 document.getElementById(
   'walletStake'
 ).textContent =
   currentStake;
 
+
 document.getElementById(
   'spinCostLabel'
 ).textContent =
   currentStake;
+
+
+
+/* =========================================================
+   DEMO TICKER
+========================================================= */
+
+/*
+  IMPORTANT:
+  These are clearly labeled DEMO / SIMULATED.
+  They are not presented as real players or real winners.
+*/
+
+const DEMO_WINNERS = [
+
+  [
+    '2519****1400',
+    1080
+  ],
+
+  [
+    '2519****7821',
+    640
+  ],
+
+  [
+    '2519****3165',
+    920
+  ],
+
+  [
+    '2519****5042',
+    1200
+  ],
+
+  [
+    '2519****9187',
+    760
+  ],
+
+  [
+    '2519****2430',
+    1500
+  ],
+
+  [
+    '2519****6674',
+    560
+  ],
+
+  [
+    '2519****8312',
+    840
+  ]
+
+];
+
+
+let demoWinnerIndex =
+  0;
+
+
+function showDemoWinner(){
+
+  const ticker =
+    document.getElementById(
+      'tickerText'
+    );
+
+
+  if (!ticker)
+    return;
+
+
+  const item =
+    DEMO_WINNERS[
+      demoWinnerIndex %
+      DEMO_WINNERS.length
+    ];
+
+
+  const phone =
+    item[0];
+
+  const amount =
+    item[1];
+
+
+  ticker.textContent =
+    `${phone}   🎉 ${amount} birr`;
+
+
+  ticker.style.animation =
+    'none';
+
+
+  void ticker.offsetWidth;
+
+
+  ticker.style.animation =
+    'tickerFade .45s ease';
+
+
+  demoWinnerIndex++;
+
+}
+
+
+/*
+  Initial display
+*/
+
+showDemoWinner();
+
+
+let lastTickerRound =
+  null;
+
+
+function updateWinnerTicker(){
+
+  const currentRound =
+    roundIdNow();
+
+
+  if (
+    lastTickerRound === null
+  ){
+
+    lastTickerRound =
+      currentRound;
+
+    return;
+
+  }
+
+
+  if (
+    currentRound !==
+    lastTickerRound
+  ){
+
+    lastTickerRound =
+      currentRound;
+
+    showDemoWinner();
+
+  }
+
+}
+
 
 
 /* =========================================================
@@ -1135,10 +2023,13 @@ function colorFor(n){
   if (n === 0)
     return 'green';
 
+
   return RED_NUMBERS.has(n)
     ? 'red'
     : 'black';
+
 }
+
 
 
 /* =========================================================
@@ -1146,7 +2037,10 @@ function colorFor(n){
 ========================================================= */
 
 const numGrid =
-  document.getElementById('numGrid');
+  document.getElementById(
+    'numGrid'
+  );
+
 
 const zeroRow =
   document.querySelector(
@@ -1161,22 +2055,34 @@ for (
 ){
 
   const cell =
-    document.createElement('div');
+    document.createElement(
+      'div'
+    );
+
 
   cell.className =
     'num-cell ' +
     colorFor(n);
 
-  cell.textContent = n;
+
+  cell.textContent =
+    n;
+
 
   cell.dataset.bet =
     'number';
 
+
   cell.dataset.value =
     n;
 
-  numGrid.appendChild(cell);
+
+  numGrid.appendChild(
+    cell
+  );
+
 }
+
 
 
 /* =========================================================
@@ -1185,25 +2091,35 @@ for (
 
 const BET_LABELS = {
 
-  red:'ቀይ Red',
+  red:
+    'ቀይ Red',
 
-  black:'ጥቁር Black',
+  black:
+    'ጥቁር Black',
 
-  odd:'ጎዶሎ Odd',
+  odd:
+    'ጎዶሎ Odd',
 
-  even:'ጥምዝ Even',
+  even:
+    'ጥምዝ Even',
 
-  low:'1–18',
+  low:
+    '1–18',
 
-  high:'19–36',
+  high:
+    '19–36',
 
-  dozen1:'1ኛ ደርዘን (1–12)',
+  dozen1:
+    '1ኛ ደርዘን (1–12)',
 
-  dozen2:'2ኛ ደርዘን (13–24)',
+  dozen2:
+    '2ኛ ደርዘን (13–24)',
 
-  dozen3:'3ኛ ደርዘን (25–36)'
+  dozen3:
+    '3ኛ ደርዘን (25–36)'
 
 };
+
 
 
 const numberEls =
@@ -1211,10 +2127,12 @@ const numberEls =
     '[data-bet="number"]'
   );
 
+
 const outsideEls =
   document.querySelectorAll(
     '.outside-cell[data-bet]'
   );
+
 
 
 /* =========================================================
@@ -1228,10 +2146,12 @@ function refreshSelectedLine(){
       'selectedLabel'
     );
 
+
   const count =
     document.getElementById(
       'markedCount'
     );
+
 
   if (
     betType === 'number' &&
@@ -1240,12 +2160,17 @@ function refreshSelectedLine(){
 
     const sorted =
       [...markedNumbers]
-        .sort((a,b) => a-b);
+        .sort(
+          (a,b) =>
+            a-b
+        );
+
 
     label.textContent =
       'ቁጥር ' +
       sorted.join(', ') +
       ' (36x)';
+
 
     count.textContent =
       'የተመረጡ ቁጥሮች: ' +
@@ -1255,13 +2180,17 @@ function refreshSelectedLine(){
 
   }
 
-  else if (betType){
+  else if (
+    betType
+  ){
 
     label.textContent =
       BET_LABELS[betType] ||
       betType;
 
-    count.textContent = '';
+
+    count.textContent =
+      '';
 
   }
 
@@ -1270,8 +2199,12 @@ function refreshSelectedLine(){
     label.textContent =
       '— ገና አልተመረጠም —';
 
-    count.textContent = '';
+
+    count.textContent =
+      '';
+
   }
+
 
   document.getElementById(
     'ticketBtn'
@@ -1283,107 +2216,138 @@ function refreshSelectedLine(){
         ? markedNumbers.length > 0
         : !!betType
     );
+
 }
+
 
 
 /* =========================================================
    NUMBER CLICK
 ========================================================= */
 
-numberEls.forEach(el => {
+numberEls.forEach(
+  el => {
 
-  el.addEventListener(
-    'click',
-    () => {
-
-      if (
-        ticketPlaced ||
-        spinning
-      ) return;
-
-      const n =
-        parseInt(
-          el.dataset.value,
-          10
-        );
-
-      const idx =
-        markedNumbers.indexOf(n);
-
-      if (idx >= 0){
-
-        markedNumbers.splice(
-          idx,
-          1
-        );
-
-        el.classList.remove(
-          'marked'
-        );
-
-      }
-
-      else{
+    el.addEventListener(
+      'click',
+      () => {
 
         if (
-          markedNumbers.length >=
-          MAX_NUMBERS
-        ){
+          ticketPlaced ||
+          spinning
+        )
+          return;
 
-          toast(
-            '⚠️ በአንድ ትኬት ቢበዛ ' +
-            MAX_NUMBERS +
-            ' ቁጥር ብቻ መያዝ ይችላሉ'
+
+        const n =
+          parseInt(
+            el.dataset.value,
+            10
           );
 
-          return;
+
+        const idx =
+          markedNumbers.indexOf(
+            n
+          );
+
+
+        if (
+          idx >= 0
+        ){
+
+          markedNumbers.splice(
+            idx,
+            1
+          );
+
+
+          el.classList.remove(
+            'marked'
+          );
+
         }
 
-        markedNumbers.push(n);
+        else{
 
-        el.classList.add(
-          'marked'
-        );
-      }
+          if (
+            markedNumbers.length >=
+            MAX_NUMBERS
+          ){
 
-      if (
-        markedNumbers.length > 0
-      ){
+            toast(
+              '⚠️ በአንድ ትኬት ቢበዛ ' +
+              MAX_NUMBERS +
+              ' ቁጥር ብቻ መያዝ ይችላሉ'
+            );
 
-        betType = 'number';
 
-        outsideEls.forEach(e =>
-          e.classList.remove(
+            return;
+
+          }
+
+
+          markedNumbers.push(
+            n
+          );
+
+
+          el.classList.add(
+            'marked'
+          );
+
+        }
+
+
+        if (
+          markedNumbers.length > 0
+        ){
+
+          betType =
+            'number';
+
+
+          outsideEls.forEach(
+            e =>
+              e.classList.remove(
+                'selected'
+              )
+          );
+
+
+          zeroRow.classList.remove(
             'selected'
-          )
-        );
+          );
 
-        zeroRow.classList.remove(
-          'selected'
-        );
+        }
+
+        else{
+
+          betType =
+            null;
+
+        }
+
+
+        refreshSelectedLine();
+
+
+        if (
+          tg &&
+          tg.HapticFeedback
+        ){
+
+          tg.HapticFeedback
+            .selectionChanged();
+
+        }
 
       }
+    );
 
-      else{
+  }
+);
 
-        betType = null;
-      }
-
-      refreshSelectedLine();
-
-      if (
-        tg &&
-        tg.HapticFeedback
-      ){
-
-        tg.HapticFeedback
-          .selectionChanged();
-      }
-
-    }
-  );
-
-});
 
 
 /* =========================================================
@@ -1397,29 +2361,41 @@ zeroRow.addEventListener(
     if (
       ticketPlaced ||
       spinning
-    ) return;
+    )
+      return;
 
-    outsideEls.forEach(e =>
-      e.classList.remove(
-        'selected'
-      )
+
+    outsideEls.forEach(
+      e =>
+        e.classList.remove(
+          'selected'
+        )
     );
 
-    numberEls.forEach(e =>
-      e.classList.remove(
-        'marked'
-      )
+
+    numberEls.forEach(
+      e =>
+        e.classList.remove(
+          'marked'
+        )
     );
 
-    markedNumbers = [0];
 
-    betType = 'number';
+    markedNumbers =
+      [0];
+
+
+    betType =
+      'number';
+
 
     zeroRow.classList.add(
       'selected'
     );
 
+
     refreshSelectedLine();
+
 
     if (
       tg &&
@@ -1428,70 +2404,88 @@ zeroRow.addEventListener(
 
       tg.HapticFeedback
         .selectionChanged();
+
     }
 
   }
 );
 
 
+
 /* =========================================================
    OUTSIDE BET CLICK
 ========================================================= */
 
-outsideEls.forEach(el => {
+outsideEls.forEach(
+  el => {
 
-  el.addEventListener(
-    'click',
-    () => {
+    el.addEventListener(
+      'click',
+      () => {
 
-      if (
-        ticketPlaced ||
-        spinning
-      ) return;
+        if (
+          ticketPlaced ||
+          spinning
+        )
+          return;
 
-      outsideEls.forEach(e =>
-        e.classList.remove(
+
+        outsideEls.forEach(
+          e =>
+            e.classList.remove(
+              'selected'
+            )
+        );
+
+
+        el.classList.add(
           'selected'
-        )
-      );
+        );
 
-      el.classList.add(
-        'selected'
-      );
 
-      zeroRow.classList.remove(
-        'selected'
-      );
+        zeroRow.classList.remove(
+          'selected'
+        );
 
-      betType =
-        el.dataset.bet;
 
-      markedNumbers = [];
+        betType =
+          el.dataset.bet;
 
-      numberEls.forEach(e =>
-        e.classList.remove(
-          'marked'
-        )
-      );
 
-      refreshSelectedLine();
+        markedNumbers =
+          [];
 
-      if (
-        tg &&
-        tg.HapticFeedback
-      ){
 
-        tg.HapticFeedback
-          .selectionChanged();
+        numberEls.forEach(
+          e =>
+            e.classList.remove(
+              'marked'
+            )
+        );
+
+
+        refreshSelectedLine();
+
+
+        if (
+          tg &&
+          tg.HapticFeedback
+        ){
+
+          tg.HapticFeedback
+            .selectionChanged();
+
+        }
+
       }
+    );
 
-    }
-  );
-
-});
+  }
+);
 
 
 refreshSelectedLine();
+
 
 
 /* =========================================================
@@ -1499,22 +2493,36 @@ refreshSelectedLine();
 ========================================================= */
 
 const WHEEL_ORDER = [
+
   0,32,15,19,4,21,2,25,17,34,6,27,13,
+
   36,11,30,8,23,10,5,24,16,33,1,20,14,
+
   31,9,22,18,29,7,28,12,35,3,26
+
 ];
+
 
 const svg =
   document.getElementById(
     'wheel-svg'
   );
 
-const CX = 150;
-const CY = 150;
-const R = 148;
+
+const CX =
+  150;
+
+const CY =
+  150;
+
+const R =
+  148;
+
 
 const segAngle =
-  360 / WHEEL_ORDER.length;
+  360 /
+  WHEEL_ORDER.length;
+
 
 
 function polar(
@@ -1525,10 +2533,15 @@ function polar(
 ){
 
   const rad =
-    (angleDeg - 90) *
-    Math.PI / 180;
+    (
+      angleDeg - 90
+    ) *
+    Math.PI /
+    180;
+
 
   return {
+
     x:
       cx +
       r *
@@ -1538,12 +2551,16 @@ function polar(
       cy +
       r *
       Math.sin(rad)
+
   };
+
 }
+
 
 
 const svgNS =
   'http://www.w3.org/2000/svg';
+
 
 
 function hexFor(n){
@@ -1551,18 +2568,28 @@ function hexFor(n){
   const c =
     colorFor(n);
 
-  if (c === 'green')
+
+  if (
+    c === 'green'
+  )
     return '#18b673';
 
-  if (c === 'red')
+
+  if (
+    c === 'red'
+  )
     return '#d81e05';
 
+
   return '#0d0d0d';
+
 }
 
 
+
 const INNER_R =
-  R * 0.42;
+  R * .42;
+
 
 
 /* =========================================================
@@ -1573,14 +2600,19 @@ WHEEL_ORDER.forEach(
   (num,i) => {
 
     const startAngle =
-      i * segAngle;
+      i *
+      segAngle;
+
 
     const endAngle =
-      startAngle + segAngle;
+      startAngle +
+      segAngle;
+
 
     const mid =
       startAngle +
       segAngle / 2;
+
 
     const po1 =
       polar(
@@ -1590,6 +2622,7 @@ WHEEL_ORDER.forEach(
         startAngle
       );
 
+
     const po2 =
       polar(
         CX,
@@ -1597,6 +2630,7 @@ WHEEL_ORDER.forEach(
         R,
         endAngle
       );
+
 
     const pi1 =
       polar(
@@ -1606,6 +2640,7 @@ WHEEL_ORDER.forEach(
         endAngle
       );
 
+
     const pi2 =
       polar(
         CX,
@@ -1614,14 +2649,19 @@ WHEEL_ORDER.forEach(
         startAngle
       );
 
+
     const largeArc =
-      segAngle > 180 ? 1 : 0;
+      segAngle > 180
+        ? 1
+        : 0;
+
 
     const path =
       document.createElementNS(
         svgNS,
         'path'
       );
+
 
     path.setAttribute(
       'd',
@@ -1634,26 +2674,34 @@ WHEEL_ORDER.forEach(
       `
     );
 
+
     path.setAttribute(
       'fill',
       hexFor(num)
     );
+
 
     path.setAttribute(
       'stroke',
       '#0a0714'
     );
 
+
     path.setAttribute(
       'stroke-width',
       '1.5'
     );
 
-    svg.appendChild(path);
+
+    svg.appendChild(
+      path
+    );
 
 
     const dotCount =
-      3 + (i % 3);
+      3 +
+      (i % 3);
+
 
     for (
       let d = 0;
@@ -1663,28 +2711,46 @@ WHEEL_ORDER.forEach(
 
       const t =
         0.15 +
-        (d / (dotCount - 1 || 1))
-        * 0.28 +
-        (Math.random() - .5)
-        * .04;
+        (
+          d /
+          (
+            dotCount - 1 ||
+            1
+          )
+        ) *
+        0.28 +
+        (
+          Math.random() - .5
+        ) *
+        .04;
+
 
       const spread =
-        (Math.random() - .5) *
+        (
+          Math.random() - .5
+        ) *
         segAngle *
         .5;
+
 
       const dotR =
         INNER_R +
         t *
-        (R - INNER_R);
+        (
+          R -
+          INNER_R
+        );
+
 
       const dpos =
         polar(
           CX,
           CY,
           dotR,
-          mid + spread
+          mid +
+          spread
         );
+
 
       const dot =
         document.createElementNS(
@@ -1692,32 +2758,41 @@ WHEEL_ORDER.forEach(
           'circle'
         );
 
+
       dot.setAttribute(
         'cx',
         dpos.x
       );
+
 
       dot.setAttribute(
         'cy',
         dpos.y
       );
 
+
       dot.setAttribute(
         'r',
         1.6
       );
+
 
       dot.setAttribute(
         'fill',
         '#f5c542'
       );
 
+
       dot.setAttribute(
         'opacity',
         '.7'
       );
 
-      svg.appendChild(dot);
+
+      svg.appendChild(
+        dot
+      );
+
     }
 
 
@@ -1729,59 +2804,77 @@ WHEEL_ORDER.forEach(
         mid
       );
 
+
     const text =
       document.createElementNS(
         svgNS,
         'text'
       );
 
+
     text.setAttribute(
       'x',
       labelPos.x
     );
+
 
     text.setAttribute(
       'y',
       labelPos.y
     );
 
+
     text.setAttribute(
       'fill',
       '#ffffff'
     );
+
 
     text.setAttribute(
       'font-size',
       '14'
     );
 
+
     text.setAttribute(
       'font-weight',
       '900'
     );
+
 
     text.setAttribute(
       'text-anchor',
       'middle'
     );
 
+
     text.setAttribute(
       'dominant-baseline',
       'middle'
     );
 
+
     text.setAttribute(
       'transform',
-      `rotate(${mid},${labelPos.x},${labelPos.y})`
+      `rotate(
+        ${mid},
+        ${labelPos.x},
+        ${labelPos.y}
+      )`
     );
+
 
     text.textContent =
       num;
 
-    svg.appendChild(text);
+
+    svg.appendChild(
+      text
+    );
 
   }
 );
+
 
 
 /* =========================================================
@@ -1793,6 +2886,7 @@ const hubRing =
     svgNS,
     'circle'
   );
+
 
 hubRing.setAttribute(
   'cx',
@@ -1814,10 +2908,12 @@ hubRing.setAttribute(
   '#0a0714'
 );
 
+
 svg.insertBefore(
   hubRing,
   svg.firstChild
 );
+
 
 
 const hubBorder =
@@ -1825,6 +2921,7 @@ const hubBorder =
     svgNS,
     'circle'
   );
+
 
 hubBorder.setAttribute(
   'cx',
@@ -1861,55 +2958,79 @@ hubBorder.setAttribute(
   '.5'
 );
 
+
 svg.appendChild(
   hubBorder
 );
+
 
 
 /* =========================================================
    ROUND CLOCK
 ========================================================= */
 
-let currentRotation = 0;
+let currentRotation =
+  0;
 
-let lastCycleId = null;
 
-let lastPhase = null;
+let lastCycleId =
+  null;
+
+
+let lastPhase =
+  null;
+
 
 
 function roundIdNow(){
 
   return Math.floor(
-    Date.now() / 1000 /
+    Date.now() /
+    1000 /
     CYCLE_LENGTH
   );
+
 }
+
 
 
 function cyclePosNow(){
 
   return Math.floor(
-    Date.now() / 1000
-  ) % CYCLE_LENGTH;
+    Date.now() /
+    1000
+  ) %
+  CYCLE_LENGTH;
+
 }
+
 
 
 function isSpinPhase(pos){
 
-  return pos >= BET_LENGTH;
+  return pos >=
+    BET_LENGTH;
+
 }
+
 
 
 function secondsLeftInBet(pos){
 
-  return BET_LENGTH - pos;
+  return BET_LENGTH -
+    pos;
+
 }
+
 
 
 function secondsLeftInSpin(pos){
 
-  return CYCLE_LENGTH - pos;
+  return CYCLE_LENGTH -
+    pos;
+
 }
+
 
 
 /* =========================================================
@@ -1918,22 +3039,28 @@ function secondsLeftInSpin(pos){
 
 function lockBoard(){
 
-  numberEls.forEach(el =>
-    el.classList.add(
-      'disabled'
-    )
+  numberEls.forEach(
+    el =>
+      el.classList.add(
+        'disabled'
+      )
   );
 
-  outsideEls.forEach(el =>
-    el.classList.add(
-      'disabled'
-    )
+
+  outsideEls.forEach(
+    el =>
+      el.classList.add(
+        'disabled'
+      )
   );
+
 
   zeroRow.classList.add(
     'disabled'
   );
+
 }
+
 
 
 /* =========================================================
@@ -1942,55 +3069,62 @@ function lockBoard(){
 
 function unlockBoardForNewRound(){
 
-  markedNumbers = [];
-
-  betType = null;
-
-  ticketPlaced = false;
-
-  ticketId = null;
-
-  numberEls.forEach(el => {
-
-    el.classList.remove(
-      'marked'
-    );
-
-    el.classList.remove(
-      'disabled'
-    );
-
-  });
+  markedNumbers =
+    [];
 
 
-  outsideEls.forEach(el => {
+  betType =
+    null;
 
-    el.classList.remove(
-      'selected'
-    );
 
-    el.classList.remove(
-      'disabled'
-    );
+  ticketPlaced =
+    false;
 
-  });
+
+  ticketId =
+    null;
+
+
+  numberEls.forEach(
+    el => {
+
+      el.classList.remove(
+        'marked'
+      );
+
+
+      el.classList.remove(
+        'disabled'
+      );
+
+    }
+  );
+
+
+  outsideEls.forEach(
+    el => {
+
+      el.classList.remove(
+        'selected'
+      );
+
+
+      el.classList.remove(
+        'disabled'
+      );
+
+    }
+  );
 
 
   zeroRow.classList.remove(
     'selected'
   );
 
+
   zeroRow.classList.remove(
     'disabled'
   );
-
-
-  /*
-    IMPORTANT:
-    የውጤቱን resultLine እዚህ
-    አናጠፋውም።
-    ቀድሞ እዚህ መጥፋቱ ችግር ነበር።
-  */
 
 
   document.getElementById(
@@ -1998,14 +3132,18 @@ function unlockBoardForNewRound(){
   ).textContent =
     '🎫 ትኬት ቁረጥ';
 
+
   document.getElementById(
     'ticketBtn'
   ).classList.remove(
     'ticketed'
   );
 
+
   refreshSelectedLine();
+
 }
+
 
 
 /* =========================================================
@@ -2017,7 +3155,8 @@ async function cutTicket(){
   if (
     ticketPlaced ||
     spinning
-  ) return;
+  )
+    return;
 
 
   if (
@@ -2029,7 +3168,9 @@ async function cutTicket(){
       '⚠️ እባክዎ ቢያንስ አንድ ቁጥር ይምረጡ!'
     );
 
+
     return;
+
   }
 
 
@@ -2039,7 +3180,9 @@ async function cutTicket(){
       '⚠️ እባክዎ ምርጫ ያድርጉ!'
     );
 
+
     return;
+
   }
 
 
@@ -2051,14 +3194,17 @@ async function cutTicket(){
 
 
   if (
-    balance < stake
+    balance <
+    stake
   ){
 
     toast(
       '❌ በቂ ሂሳብ የለዎትም'
     );
 
+
     return;
+
   }
 
 
@@ -2068,6 +3214,7 @@ async function cutTicket(){
       await fetch(
         '/api/place-ticket',
         {
+
           method:'POST',
 
           headers:{
@@ -2075,24 +3222,27 @@ async function cutTicket(){
               'application/json'
           },
 
-          body:JSON.stringify({
+          body:
+            JSON.stringify({
 
-            initData,
+              initData,
 
-            round:
-              roundIdNow(),
+              round:
+                roundIdNow(),
 
-            betType,
+              betType,
 
-            numbers:
-              markedNumbers,
+              numbers:
+                markedNumbers,
 
-            stake:
-              currentStake
+              stake:
+                currentStake
 
-          }),
+            }),
 
-          cache:'no-store'
+          cache:
+            'no-store'
+
         }
       );
 
@@ -2108,11 +3258,15 @@ async function cutTicket(){
         '❌ ስህተት ተፈጥሯል'
       );
 
+
       return;
+
     }
 
 
-    ticketPlaced = true;
+    ticketPlaced =
+      true;
+
 
     ticketId =
       data.ticket_id ??
@@ -2128,10 +3282,12 @@ async function cutTicket(){
       balance =
         data.balance;
 
+
       document.getElementById(
         'walletBalance'
       ).textContent =
         balance;
+
     }
 
 
@@ -2166,6 +3322,7 @@ async function cutTicket(){
         .notificationOccurred(
           'success'
         );
+
     }
 
 
@@ -2176,16 +3333,19 @@ async function cutTicket(){
       e
     );
 
+
     toast(
       '❌ ከሰርቨሩ ጋር መገናኘት አልተቻለም'
     );
+
   }
+
 }
+
 
 
 /* =========================================================
    EXTRACT WINNING NUMBER
-   Handles different possible API names.
 ========================================================= */
 
 function getWinningNumber(data){
@@ -2212,18 +3372,23 @@ function getWinningNumber(data){
     const n =
       Number(value);
 
+
     if (
       Number.isInteger(n) &&
       WHEEL_ORDER.includes(n)
     ){
 
       return n;
+
     }
+
   }
 
 
   return null;
+
 }
+
 
 
 /* =========================================================
@@ -2248,11 +3413,16 @@ function getWinningColor(
   ){
 
     return raw;
+
   }
 
 
-  return colorFor(number);
+  return colorFor(
+    number
+  );
+
 }
+
 
 
 /* =========================================================
@@ -2263,11 +3433,6 @@ async function resolveRound(
   roundId
 ){
 
-  /*
-    አንድ round ሁለት ጊዜ
-    እንዳይጠራ
-  */
-
   if (
     resolvingRound
   ){
@@ -2277,7 +3442,9 @@ async function resolveRound(
       roundId
     );
 
+
     return;
+
   }
 
 
@@ -2292,13 +3459,19 @@ async function resolveRound(
       roundId
     );
 
+
     return;
+
   }
 
 
-  resolvingRound = true;
+  resolvingRound =
+    true;
 
-  spinning = true;
+
+  spinning =
+    true;
+
 
   lockBoard();
 
@@ -2326,6 +3499,7 @@ async function resolveRound(
       encodeURIComponent(
         roundId
       ) +
+
       (
         ticketId
           ? '&ticket_id=' +
@@ -2334,7 +3508,12 @@ async function resolveRound(
             )
           : ''
       ) +
-      `&initData=${encodeURIComponent(initData)}`;
+
+      `&initData=${
+        encodeURIComponent(
+          initData
+        )
+      }`;
 
 
     console.log(
@@ -2360,13 +3539,9 @@ async function resolveRound(
         'HTTP ' +
         resp.status
       );
+
     }
 
-
-    /*
-      API ምናልባት JSON
-      እንጂ HTML እንዳይመልስ
-    */
 
     const contentType =
       resp.headers.get(
@@ -2383,14 +3558,20 @@ async function resolveRound(
       const text =
         await resp.text();
 
+
       console.error(
         'API returned non-JSON:',
-        text.slice(0,300)
+        text.slice(
+          0,
+          300
+        )
       );
+
 
       throw new Error(
         'API did not return JSON'
       );
+
     }
 
 
@@ -2412,9 +3593,12 @@ async function resolveRound(
     );
 
 
-    spinning = false;
+    spinning =
+      false;
 
-    resolvingRound = false;
+
+    resolvingRound =
+      false;
 
 
     document.getElementById(
@@ -2430,13 +3614,6 @@ async function resolveRound(
       'ይምረጡ';
 
 
-    /*
-      እዚህ reload,
-      location.href,
-      tg.close
-      አንጠቀምም።
-    */
-
     toast(
       '❌ የዙሩን ውጤት ማምጣት አልተቻለም'
     );
@@ -2444,20 +3621,21 @@ async function resolveRound(
 
     unlockBoardForNewRound();
 
+
     return;
+
   }
 
 
   const winningNumber =
-    getWinningNumber(data);
+    getWinningNumber(
+      data
+    );
 
-
-  /*
-    undefined እንዳይወጣ
-  */
 
   if (
-    winningNumber === null
+    winningNumber ===
+    null
   ){
 
     console.error(
@@ -2466,9 +3644,12 @@ async function resolveRound(
     );
 
 
-    spinning = false;
+    spinning =
+      false;
 
-    resolvingRound = false;
+
+    resolvingRound =
+      false;
 
 
     document.getElementById(
@@ -2491,7 +3672,9 @@ async function resolveRound(
 
     unlockBoardForNewRound();
 
+
     return;
+
   }
 
 
@@ -2515,7 +3698,8 @@ async function resolveRound(
 
 
   const fullSpins =
-    8 * 360;
+    8 *
+    360;
 
 
   const finalRotation =
@@ -2526,7 +3710,8 @@ async function resolveRound(
   currentRotation +=
     finalRotation -
     (
-      currentRotation % 360
+      currentRotation %
+      360
     );
 
 
@@ -2549,36 +3734,42 @@ async function resolveRound(
       .impactOccurred(
         'light'
       );
+
   }
 
 
   setTimeout(
     () => {
 
-      spinning = false;
+      spinning =
+        false;
 
-      resolvingRound = false;
+
+      resolvingRound =
+        false;
+
 
       resolvedRounds.add(
         roundId
       );
 
 
-      /*
-        የቆዩ round IDs እንዳይበዙ
-      */
-
       if (
-        resolvedRounds.size > 30
+        resolvedRounds.size >
+        30
       ){
 
         const arr =
-          [...resolvedRounds];
+          [
+            ...resolvedRounds
+          ];
+
 
         resolvedRounds =
           new Set(
             arr.slice(-15)
           );
+
       }
 
 
@@ -2603,10 +3794,12 @@ async function resolveRound(
         balance =
           data.balance;
 
+
         document.getElementById(
           'walletBalance'
         ).textContent =
           balance;
+
       }
 
 
@@ -2623,11 +3816,6 @@ async function resolveRound(
             ? 'ጥቁር'
             : 'አረንጓዴ';
 
-
-      /*
-        IMPORTANT:
-        won በboolean ብቻ እንተማመናለን
-      */
 
       const won =
         data.won === true ||
@@ -2652,6 +3840,7 @@ async function resolveRound(
         line.textContent =
           `🎉 ${winningNumber} (${colorLabel}) ወጣ — ${amount} አሸንፈዋል!`;
 
+
         line.className =
           'result-line win';
 
@@ -2670,6 +3859,7 @@ async function resolveRound(
             .notificationOccurred(
               'success'
             );
+
         }
 
       }
@@ -2680,6 +3870,7 @@ async function resolveRound(
 
         line.textContent =
           `😔 ${winningNumber} (${colorLabel}) ወጣ — እንደገና ይሞክሩ`;
+
 
         line.className =
           'result-line lose';
@@ -2694,6 +3885,7 @@ async function resolveRound(
             .notificationOccurred(
               'error'
             );
+
         }
 
       }
@@ -2705,12 +3897,9 @@ async function resolveRound(
 
         line.className =
           'result-line';
+
       }
 
-
-      /*
-        History
-      */
 
       resultHistory.unshift({
 
@@ -2730,25 +3919,25 @@ async function resolveRound(
 
         resultHistory.length =
           HISTORY_MAX;
+
       }
 
 
       renderHistory();
 
 
-      /*
-        IMPORTANT:
-        unlockBoardForNewRound()
-        የresultLine ን አያጠፋም።
-      */
-
       unlockBoardForNewRound();
 
 
     },
-    SPIN_LENGTH * 1000
+
+    SPIN_LENGTH *
+    1000
+
   );
+
 }
+
 
 
 /* =========================================================
@@ -2767,13 +3956,16 @@ function renderHistory(){
     !resultHistory.length
   ){
 
-    strip.innerHTML = '';
+    strip.innerHTML =
+      '';
 
     return;
+
   }
 
 
-  strip.innerHTML = '';
+  strip.innerHTML =
+    '';
 
 
   resultHistory.forEach(
@@ -2789,7 +3981,9 @@ function renderHistory(){
         'hist-chip ' +
         (
           r.color ||
-          colorFor(r.number)
+          colorFor(
+            r.number
+          )
         );
 
 
@@ -2803,7 +3997,9 @@ function renderHistory(){
 
     }
   );
+
 }
+
 
 
 /* =========================================================
@@ -2812,11 +4008,20 @@ function renderHistory(){
 
 function tickRoundClock(){
 
+  /*
+    Update DEMO ticker once per round
+  */
+
+  updateWinnerTicker();
+
+
   const cid =
     roundIdNow();
 
+
   const pos =
     cyclePosNow();
+
 
   const phase =
     isSpinPhase(pos)
@@ -2825,24 +4030,24 @@ function tickRoundClock(){
 
 
   if (
-    lastCycleId === null
+    lastCycleId ===
+    null
   ){
 
     lastCycleId =
       cid;
 
+
     lastPhase =
       phase;
+
   }
 
 
   /*
-    40 sec bet
-    10 sec spin
-
-    spin ከጨረሰ በኋላ
-    የቀድሞው round cid-1
-    እንፈታዋለን።
+    When spin finishes and
+    new bet phase begins,
+    resolve previous round.
   */
 
   if (
@@ -2853,6 +4058,7 @@ function tickRoundClock(){
     const previousRound =
       cid - 1;
 
+
     if (
       !resolvedRounds.has(
         previousRound
@@ -2862,12 +4068,15 @@ function tickRoundClock(){
       resolveRound(
         previousRound
       );
+
     }
+
   }
 
 
   lastPhase =
     phase;
+
 
   lastCycleId =
     cid;
@@ -2908,8 +4117,11 @@ function tickRoundClock(){
       'rtCount'
     ).textContent =
       left;
+
   }
+
 }
+
 
 
 /* =========================================================
@@ -2925,10 +4137,9 @@ setInterval(
 );
 
 
+
 /* =========================================================
-   EXTRA SAFETY
-   Browser/Telegram visibility changes should NOT
-   reload or navigate the app.
+   VISIBILITY
 ========================================================= */
 
 document.addEventListener(
@@ -2939,18 +4150,15 @@ document.addEventListener(
       !document.hidden
     ){
 
-      /*
-        ተመልሶ ሲመጣ clock እንደገና
-        እንዲ synchronize ይሆናል።
-      */
-
       tickRoundClock();
 
       refreshBalance();
+
     }
 
   }
 );
+
 
 
 window.addEventListener(
@@ -2967,12 +4175,10 @@ window.addEventListener(
 
 /*
   IMPORTANT:
-  እዚህ ምንም
-  window.location.href
-  location.reload()
-  history.back()
-  tg.close()
-  የለም።
+  No reload.
+  No redirect.
+  No history.back().
+  No tg.close().
 */
 
 </script>
